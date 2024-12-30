@@ -1,8 +1,8 @@
 {
-  "name": "cat",
-  "productName": "cat",
+  "name": "storyscribe",
+  "productName": "StoryScribe",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "A story writer's companion",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -29,7 +29,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.31.0",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4",
+    "typescript": "^5.7.2",
     "vite": "^5.4.11"
   },
   "keywords": [],
