@@ -9,7 +9,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix ."
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.6.0",
@@ -22,7 +23,9 @@
     "@electron-forge/plugin-vite": "^7.6.0",
     "@electron/fuses": "^1.8.0",
     "@eslint/js": "^9.17.0",
+    "@stylistic/eslint-plugin-ts": "^2.12.1",
     "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/splitpanes": "^2.2.6",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-vue": "^5.2.1",
@@ -43,7 +46,9 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@vscode/codicons": "^0.0.36",
     "electron-squirrel-startup": "^1.0.1",
+    "splitpanes": "^3.1.5",
     "vue": "^3.5.13"
   }
 }

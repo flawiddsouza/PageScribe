@@ -1,7 +1,11 @@
-export {}
+export {};
 
 declare global {
   interface Window {
-    electron: any;
+    electron: {
+      ipcRenderer: {
+        invoke: (channel: string, ...args: unknown[]) => Promise<{ canceled: boolean; filePaths: string[] }>;
+      };
+    };
   }
 }

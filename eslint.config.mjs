@@ -1,23 +1,42 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginVue from "eslint-plugin-vue";
-
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginVue from 'eslint-plugin-vue';
+import stylisticTs from '@stylistic/eslint-plugin-ts';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { files: ["**/*.{js,mjs,cjs,ts,vue}"] },
+  {
+    plugins: {
+      '@stylistic/ts': stylisticTs
+    }
+  },
+  { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   {
     ignores: ['.vite']
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
-  ...pluginVue.configs["flat/essential"],
-  { files: ["**/*.vue"], languageOptions: { parserOptions: { parser: tseslint.parser } } },
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: ['.vue'],
+      },
+    },
+  },
+  ...pluginVue.configs['flat/essential'],
+  { files: ['**/*.vue'], languageOptions: { parserOptions: { parser: tseslint.parser } } },
   {
     rules: {
       'vue/multi-word-component-names': 'off',
+      '@stylistic/ts/indent': ['error', 2],
+      '@stylistic/ts/quotes': ['error', 'single'],
+      '@stylistic/ts/semi': ['error', 'always'],
+      // '@typescript-eslint/no-floating-promises': 'error',
+      '@stylistic/ts/function-call-spacing': ['error', 'never'],
     }
   }
 ];
