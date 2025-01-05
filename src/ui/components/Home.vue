@@ -100,7 +100,7 @@ async function getDirectoryTree(filePath: string) {
 async function loadFile(filePath: string) {
   try {
     const basePath = localStorage.getItem('lastOpenedFolder');
-    const fileContent = await ipc.readFile(filePath, basePath);
+    const fileContent = await ipc.readFile(basePath, filePath);
     rendererRef.value.innerHTML = '';
     const { default: TextRenderer } = await import('../../../plugins/text-renderer/text-renderer.js');
     rendererInstance = new TextRenderer(rendererRef.value);
@@ -136,15 +136,14 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
       {
         label: 'New File...',
         onClick() {
-          console.log('New File Start', item)
           showSidebarItemInput.value = {
             parentId: item.id,
             type: 'file',
             initialValue: '',
-            callback(success: boolean, value: string) {
+            async callback(success: boolean, value: string) {
               if (success && value) {
                 const basePath = localStorage.getItem('lastOpenedFolder');
-                ipc.createFile(value, item.id, basePath);
+                await ipc.createFile(basePath, item.id, value);
                 getDirectoryTree(basePath);
               }
               showSidebarItemInput.value = null;
@@ -155,7 +154,6 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
       {
         label: 'New Folder...',
         onClick() {
-          console.log('New Folder Start', item)
           showSidebarItemInput.value = {
             parentId: item.id,
             type: 'folder',
@@ -163,7 +161,7 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
             async callback(success: boolean, value: string) {
               if (success && value) {
                 const basePath = localStorage.getItem('lastOpenedFolder');
-                await ipc.createFolder(value, item.id, basePath);
+                await ipc.createFolder(basePath, item.id, value);
                 getDirectoryTree(basePath);
               }
               showSidebarItemInput.value = null;
@@ -173,14 +171,30 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
       },
       {
         label: 'Delete',
-        onClick: () => console.log('Delete', item),
+        async onClick(){
+          if (!confirm(`Are you sure you want to delete ${item.id}?`)) {
+            return;
+          }
+
+          const basePath = localStorage.getItem('lastOpenedFolder');
+          await ipc.deleteFolder(basePath, item.id);
+          getDirectoryTree(basePath);
+        },
       },
     ];
   } else {
     contextMenuItems = [
       {
         label: 'Delete',
-        onClick: () => console.log('Delete', item),
+        async onClick() {
+          if (!confirm(`Are you sure you want to delete ${item.id}?`)) {
+            return;
+          }
+
+          const basePath = localStorage.getItem('lastOpenedFolder');
+          await ipc.deleteFile(basePath, item.id);
+          getDirectoryTree(basePath);
+        },
       },
     ];
   }

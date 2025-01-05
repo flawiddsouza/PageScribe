@@ -18,19 +18,27 @@ ipcMain.handle('get-directory-tree', async (event, folderPath: string) => {
   return directoryStructure;
 });
 
-ipcMain.handle('read-file', async (event, filePath: string, basePath: string) => {
+ipcMain.handle('read-file', async (event, basePath: string, filePath: string) => {
   const fileContent = await fs.readFile(path.join(basePath, filePath), 'utf8');
   return fileContent;
 });
 
-ipcMain.handle('create-file', async (event, fileName: string, folderPath: string, basePath: string) => {
+ipcMain.handle('create-file', async (event, basePath: string, folderPath: string, fileName: string) => {
   await fs.writeFile(path.join(basePath, folderPath, fileName), '');
 });
 
-ipcMain.handle('create-folder', async (event, folderName: string, folderPath: string, basePath: string) => {
+ipcMain.handle('create-folder', async (event, basePath: string, folderPath: string, folderName: string) => {
   await fs.mkdir(path.join(basePath, folderPath, folderName));
 });
 
 ipcMain.handle('write-file', async (event, basePath: string, filePath: string, fileContent: string) => {
   await fs.writeFile(path.join(basePath, filePath), fileContent);
+});
+
+ipcMain.handle('delete-file', async (event, basePath: string, filePath: string) => {
+  await fs.unlink(path.join(basePath, filePath));
+});
+
+ipcMain.handle('delete-folder', async (event, basePath: string, folderPath: string) => {
+  await fs.rmdir(path.join(basePath, folderPath), { recursive: true });
 });

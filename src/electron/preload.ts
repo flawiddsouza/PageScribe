@@ -4,9 +4,11 @@ contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
     openFolder: () => ipcRenderer.invoke('open-folder'),
     getDirectoryTree: (folderPath: string) => ipcRenderer.invoke('get-directory-tree', folderPath),
-    readFile: (filePath: string, basePath: string) => ipcRenderer.invoke('read-file', filePath, basePath),
-    createFile: (fileName: string, folderPath: string, basePath: string) => ipcRenderer.invoke('create-file', fileName, folderPath, basePath),
-    createFolder: (folderName: string, folderPath: string, basePath: string) => ipcRenderer.invoke('create-folder', folderName, folderPath, basePath),
+    readFile: (basePath: string, filePath: string) => ipcRenderer.invoke('read-file', basePath, filePath),
+    createFile: (basePath: string, folderPath: string, fileName: string) => ipcRenderer.invoke('create-file', basePath, folderPath, fileName),
+    createFolder: (basePath: string, folderPath: string, folderName: string) => ipcRenderer.invoke('create-folder', basePath, folderPath, folderName),
     writeFile: (basePath: string, filePath: string, fileContent: string) => ipcRenderer.invoke('write-file', basePath, filePath, fileContent),
+    deleteFile: (basePath: string, filePath: string) => ipcRenderer.invoke('delete-file', basePath, filePath),
+    deleteFolder: (basePath: string, folderPath: string) => ipcRenderer.invoke('delete-folder', basePath, folderPath),
   }
 });

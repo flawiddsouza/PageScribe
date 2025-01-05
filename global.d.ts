@@ -8,10 +8,12 @@ declare global {
       ipcRenderer: {
         openFolder: () => Promise<{ canceled: boolean; filePaths: string[] }>;
         getDirectoryTree: (folderPath: string) => Promise<DirectoryItem[]>;
-        readFile: (filePath: string, basePath: string) => Promise<string>;
-        createFile: (fileName: string, folderPath: string, basePath: string) => Promise<void>;
-        createFolder: (folderName: string, folderPath: string, basePath: string) => Promise<void>;
+        readFile: (basePath: string, filePath: string) => Promise<string>;
+        createFile: (basePath: string, folderPath: string, fileName: string) => Promise<void>;
+        createFolder: (basePath: string, folderPath: string, folderName: string) => Promise<void>;
         writeFile: (basePath: string, filePath: string, fileContent: string) => Promise<void>;
+        deleteFile: (basePath: string, filePath: string) => Promise<void>;
+        deleteFolder: (basePath: string, folderPath: string) => Promise<void>;
       };
     };
   }
