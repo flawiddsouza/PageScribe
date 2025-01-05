@@ -44,5 +44,20 @@ export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
     }
   }
 
-  return result;
+  // Sort folders at the top and then files
+  function sortItems(items: DirectoryItem[]): DirectoryItem[] {
+    return items.sort((a, b) => {
+      if (a.type === b.type) {
+        return a.name.localeCompare(b.name);
+      }
+      return a.type === 'folder' ? -1 : 1;
+    }).map(item => {
+      if (item.children) {
+        item.children = sortItems(item.children);
+      }
+      return item;
+    });
+  }
+
+  return sortItems(result);
 }

@@ -9,6 +9,12 @@ if (started) {
 }
 
 const createWindow = () => {
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    // electron-devtools-installer
+    const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+    installExtension(VUEJS_DEVTOOLS);
+  }
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
