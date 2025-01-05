@@ -1,6 +1,6 @@
 export {};
 
-import type { DirectoryItem } from './src/components/types';
+import type { DirectoryItem } from './src/ui/components/types';
 
 declare global {
   interface Window {
