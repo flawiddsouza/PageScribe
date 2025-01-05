@@ -128,11 +128,28 @@ function handleClick(item: DirectoryItem) {
   }
 }
 
-function handleRightClick(item: DirectoryItem, event: MouseEvent) {
-  let contextMenuItems = [];
+function createContextMenuItems(item: DirectoryItem) {
+  const basePath = localStorage.getItem('lastOpenedFolder');
+
+  const handleCallback = async (success: boolean, value: string, type: 'file' | 'folder') => {
+    if (success && value) {
+      const createMethod = type === 'file' ? ipc.createFile : ipc.createFolder;
+      await createMethod(basePath, item.id, value);
+      getDirectoryTree(basePath);
+    }
+    showSidebarItemInput.value = null;
+  };
+
+  const handleDelete = async (type: 'file' | 'folder') => {
+    if (confirm(`Are you sure you want to delete ${item.id}?`)) {
+      const deleteMethod = type === 'file' ? ipc.deleteFile : ipc.deleteFolder;
+      await deleteMethod(basePath, item.id);
+      getDirectoryTree(basePath);
+    }
+  };
 
   if (item.type === 'folder') {
-    contextMenuItems = [
+    return [
       {
         label: 'New File...',
         onClick() {
@@ -140,14 +157,7 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
             parentId: item.id,
             type: 'file',
             initialValue: '',
-            async callback(success: boolean, value: string) {
-              if (success && value) {
-                const basePath = localStorage.getItem('lastOpenedFolder');
-                await ipc.createFile(basePath, item.id, value);
-                getDirectoryTree(basePath);
-              }
-              showSidebarItemInput.value = null;
-            },
+            callback: (success, value) => handleCallback(success, value, 'file'),
           };
         },
       },
@@ -158,47 +168,27 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
             parentId: item.id,
             type: 'folder',
             initialValue: '',
-            async callback(success: boolean, value: string) {
-              if (success && value) {
-                const basePath = localStorage.getItem('lastOpenedFolder');
-                await ipc.createFolder(basePath, item.id, value);
-                getDirectoryTree(basePath);
-              }
-              showSidebarItemInput.value = null;
-            },
+            callback: (success, value) => handleCallback(success, value, 'folder'),
           };
         },
       },
       {
         label: 'Delete',
-        async onClick(){
-          if (!confirm(`Are you sure you want to delete ${item.id}?`)) {
-            return;
-          }
-
-          const basePath = localStorage.getItem('lastOpenedFolder');
-          await ipc.deleteFolder(basePath, item.id);
-          getDirectoryTree(basePath);
-        },
+        onClick: () => handleDelete('folder'),
       },
     ];
   } else {
-    contextMenuItems = [
+    return [
       {
         label: 'Delete',
-        async onClick() {
-          if (!confirm(`Are you sure you want to delete ${item.id}?`)) {
-            return;
-          }
-
-          const basePath = localStorage.getItem('lastOpenedFolder');
-          await ipc.deleteFile(basePath, item.id);
-          getDirectoryTree(basePath);
-        },
+        onClick: () => handleDelete('file'),
       },
     ];
   }
+}
 
+function handleRightClick(item: DirectoryItem, event: MouseEvent) {
+  const contextMenuItems = createContextMenuItems(item);
   ContextMenu.showContextMenu({
     x: event.clientX,
     y: event.clientY,
