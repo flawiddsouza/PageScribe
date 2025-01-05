@@ -11,6 +11,7 @@
       :item="item"
       :level="0"
       :selected-items="selectedItems"
+      :right-clicked-item="rightClickedItem"
       :hover-color="hoverColor"
       :active-color="activeColor"
       :active-border-color="activeBorderColor"
@@ -35,6 +36,7 @@ const props = defineProps<{
 const sidebarRef = useTemplateRef('sidebar');
 
 const selectedItems = ref<Set<DirectoryItem>>(new Set());
+const rightClickedItem = ref<DirectoryItem | null>(null);
 
 const emit = defineEmits(['item-clicked', 'item-right-clicked']);
 
@@ -57,6 +59,7 @@ function handleItemClick(item: DirectoryItem, event: MouseEvent) {
 
 function handleItemRightClick(item: DirectoryItem, event: MouseEvent) {
   event.preventDefault();
+  rightClickedItem.value = item;
   emit('item-right-clicked', item, event);
 }
 
@@ -66,6 +69,14 @@ function deselectAllItems(event: MouseEvent) {
     (event.target as HTMLElement).focus();
   }
 }
+
+function clearRightClickedItem() {
+  rightClickedItem.value = null;
+}
+
+defineExpose({
+  clearRightClickedItem,
+});
 
 // if focus is within sidebar and I press ctrl + a, select all items
 window.addEventListener('keydown', (event) => {

@@ -22,6 +22,7 @@
           active-border-color="#b6d5fb"
           @item-clicked="handleClick"
           @item-right-clicked="handleRightClick"
+          ref="sidebar"
         />
       </pane>
       <pane
@@ -48,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, useTemplateRef } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
@@ -56,6 +57,7 @@ import * as ipc from '../ipc';
 import ContextMenu from '@imengyu/vue3-context-menu';
 import type { DirectoryItem } from './types';
 
+const sidebarRef = useTemplateRef('sidebar');
 const items = ref<DirectoryItem[]>([]);
 const clickedItem = ref<DirectoryItem|null>(null);
 const content = ref('');
@@ -139,6 +141,7 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
     y: event.clientY,
     items,
     preserveIconWidth: false,
+    onClose: () => sidebarRef.value.clearRightClickedItem(),
   });
 }
 </script>

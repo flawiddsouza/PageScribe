@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['folder-item', { active: isActive }]"
+    :class="['folder-item', { active: isActive, 'right-clicked': isRightClicked }]"
     :style="{ paddingLeft: `${leftMargin + (level * 20)}px` }"
     @click="handleClick"
     @contextmenu="handleRightClick"
@@ -14,6 +14,7 @@
       :item="child"
       :level="level + 1"
       :selected-items="selectedItems"
+      :right-clicked-item="rightClickedItem"
       :hover-color="hoverColor"
       :active-color="activeColor"
       :active-border-color="activeBorderColor"
@@ -32,6 +33,7 @@ const props = defineProps<{
   item: DirectoryItem,
   level: number,
   selectedItems: Set<DirectoryItem>,
+  rightClickedItem: DirectoryItem | null,
   hoverColor: string,
   activeColor: string,
   activeBorderColor: string,
@@ -42,6 +44,10 @@ const leftMargin = 20;
 
 const isActive = computed(() => {
   return Array.from(props.selectedItems).some(selectedItem => selectedItem.id === props.item.id);
+});
+
+const isRightClicked = computed(() => {
+  return props.rightClickedItem?.id === props.item.id;
 });
 
 function toggle() {
@@ -85,6 +91,9 @@ function handleRightClick(event: MouseEvent) {
 
 .folder-item.active {
   background-color: v-bind(activeColor);
+}
+
+.folder-item.right-clicked {
   border-color: v-bind(activeBorderColor);
 }
 
