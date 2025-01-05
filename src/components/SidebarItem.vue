@@ -23,15 +23,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import '@vscode/codicons/dist/codicon.css';
+import type { DirectoryItem } from './types';
 
-interface Item {
-  id: number;
-  name: string;
-  type: 'folder' | 'file';
-  children?: Item[];
-}
-
-const props = defineProps<{ item: Item, level: number, selectedItems: Set<Item> }>();
+const props = defineProps<{ item: DirectoryItem, level: number, selectedItems: Set<DirectoryItem> }>();
 const emit = defineEmits(['item-clicked', 'item-right-clicked']);
 const isOpen = ref(true);
 const leftMargin = 20;
@@ -44,11 +38,11 @@ function toggle() {
   isOpen.value = !isOpen.value;
 }
 
-function handleChildClick(item: Item, event: MouseEvent) {
+function handleChildClick(item: DirectoryItem, event: MouseEvent) {
   emit('item-clicked', item, event);
 }
 
-function handleChildRightClick(item: Item, event: MouseEvent) {
+function handleChildRightClick(item: DirectoryItem, event: MouseEvent) {
   emit('item-right-clicked', item, event);
 }
 

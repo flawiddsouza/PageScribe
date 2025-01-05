@@ -7,8 +7,12 @@
       <pane
         min-size="15"
         size="15"
+        style="display: grid; grid-template-rows: auto 1fr;"
       >
-        <button @click="openFolder" style="width: 100%;">
+        <button
+          style="width: 100%;"
+          @click="openFolder"
+        >
           Open Folder
         </button>
         <Sidebar
@@ -21,7 +25,20 @@
         min-size="15"
         size="85"
       >
-        <div>{{ clickedItemName }}</div>
+        <div
+          v-if="clickedItem"
+          style="height: 100%; display: grid; grid-template-rows: auto 1fr;"
+        >
+          <div>{{ clickedItem.id }}</div>
+          <textarea
+            v-model="content"
+            style="width: 100%; height: 100%; resize: none; padding: 1rem;"
+            spellcheck="false"
+          />
+        </div>
+        <div v-else>
+          <p>Click on a file to view its content.</p>
+        </div>
       </pane>
     </splitpanes>
   </main>
@@ -32,17 +49,11 @@ import { onBeforeMount, ref } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
+import type { DirectoryItem } from './types';
 
-const clickedItemName = ref('');
-
-interface Item {
-  id: number;
-  name: string;
-  type: 'folder' | 'file';
-  children?: Item[];
-}
-
-const items = ref<Item[]>([]);
+const items = ref<DirectoryItem[]>([]);
+const clickedItem = ref<DirectoryItem|null>(null);
+const content = ref('');
 
 onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
@@ -51,9 +62,16 @@ onBeforeMount(async () => {
   }
 });
 
+function resetView() {
+  clickedItem.value = null;
+  content.value = '';
+  items.value = [];
+}
+
 async function openFolder() {
-  const result = await window.electron.ipcRenderer.invoke('open-folder');
+  const result = await window.electron.ipcRenderer.openFolder();
   if (result && !result.canceled && result.filePaths.length > 0) {
+    resetView();
     const filePath = result.filePaths[0];
     localStorage.setItem('lastOpenedFolder', filePath);
     getDirectoryTree(filePath);
@@ -62,12 +80,26 @@ async function openFolder() {
 
 async function getDirectoryTree(filePath: string) {
   document.title = filePath + ' - StoryScribe';
-  const directoryStructure = await window.electron.ipcRenderer.invoke('get-directory-tree', filePath);
+  const directoryStructure = await window.electron.ipcRenderer.getDirectoryTree(filePath);
   items.value = directoryStructure;
 }
 
-function handleClick(itemName: string) {
-  clickedItemName.value = itemName;
+async function loadFile(filePath: string) {
+  try {
+    const fileContent = await window.electron.ipcRenderer.readFile(filePath, localStorage.getItem('lastOpenedFolder'));
+    content.value = fileContent;
+  } catch (error) {
+    content.value = 'Error loading file: ' + error.message;
+  }
+}
+
+function handleClick(item: DirectoryItem) {
+  clickedItem.value = item;
+  if (item.type === 'file') {
+    loadFile(item.id);
+  } else {
+    content.value = 'Directory selected. Click on a file to view its content.';
+  }
 }
 
 function handleRightClick(item: { name: string }, event: MouseEvent) {

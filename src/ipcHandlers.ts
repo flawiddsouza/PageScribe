@@ -1,5 +1,7 @@
 import { ipcMain, dialog } from 'electron';
 import { getDirectoryTree } from './utils';
+import fs from 'fs/promises';
+import path from 'path';
 
 ipcMain.handle('open-folder', async () => {
   const result = await dialog.showOpenDialog({
@@ -14,4 +16,9 @@ ipcMain.handle('open-folder', async () => {
 ipcMain.handle('get-directory-tree', async (event, folderPath: string) => {
   const directoryStructure = await getDirectoryTree(folderPath);
   return directoryStructure;
+});
+
+ipcMain.handle('read-file', async (event, filePath: string, basePath: string) => {
+  const fileContent = await fs.readFile(path.join(basePath, filePath), 'utf8');
+  return fileContent;
 });

@@ -39,7 +39,7 @@ export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
           item.children = [];
         }
         currentDir.push(item);
-        currentDir = item.children;
+        currentDir = item.children?.filter(item => item.name !== '') || [];
       }
     }
   }
@@ -48,7 +48,7 @@ export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
   function sortItems(items: DirectoryItem[]): DirectoryItem[] {
     return items.sort((a, b) => {
       if (a.type === b.type) {
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
       }
       return a.type === 'folder' ? -1 : 1;
     }).map(item => {

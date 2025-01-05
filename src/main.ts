@@ -8,10 +8,10 @@ if (started) {
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = async() => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     // electron-devtools-installer
-    const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+    const { default: installExtension, VUEJS_DEVTOOLS } = await import('electron-devtools-installer');
     installExtension(VUEJS_DEVTOOLS);
   }
 

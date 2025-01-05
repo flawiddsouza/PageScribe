@@ -15,21 +15,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import SidebarItem from './SidebarItem.vue';
+import type { DirectoryItem } from './types';
 
-interface Item {
-  id: number;
-  name: string;
-  type: 'folder' | 'file';
-  children?: Item[];
-}
+defineProps<{ items: DirectoryItem[] }>();
 
-defineProps<{ items: Item[] }>();
-
-const selectedItems = ref<Set<Item>>(new Set());
+const selectedItems = ref<Set<DirectoryItem>>(new Set());
 
 const emit = defineEmits(['item-clicked', 'item-right-clicked']);
 
-function handleItemClick(item: Item, event: MouseEvent) {
+function handleItemClick(item: DirectoryItem, event: MouseEvent) {
   if (event.ctrlKey) {
     if (selectedItems.value.has(item)) {
       selectedItems.value.delete(item);
@@ -44,7 +38,7 @@ function handleItemClick(item: Item, event: MouseEvent) {
   emit('item-clicked', item, event);
 }
 
-function handleItemRightClick(item: Item, event: MouseEvent) {
+function handleItemRightClick(item: DirectoryItem, event: MouseEvent) {
   event.preventDefault();
   emit('item-right-clicked', item, event);
 }
@@ -55,5 +49,6 @@ function handleItemRightClick(item: Item, event: MouseEvent) {
   height: 100%;
   overflow-y: auto;
   user-select: none;
+  padding-bottom: 2rem;
 }
 </style>

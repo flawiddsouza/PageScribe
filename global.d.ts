@@ -1,10 +1,14 @@
 export {};
 
+import type { DirectoryItem } from './src/components/types';
+
 declare global {
   interface Window {
     electron: {
       ipcRenderer: {
-        invoke: (channel: string, ...args: unknown[]) => Promise<{ canceled: boolean; filePaths: string[] }>;
+        openFolder: () => Promise<{ canceled: boolean; filePaths: string[] }>;
+        getDirectoryTree: (folderPath: string) => Promise<DirectoryItem[]>;
+        readFile: (filePath: string, basePath: string) => Promise<string>;
       };
     };
   }
