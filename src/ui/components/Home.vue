@@ -17,6 +17,9 @@
         </button>
         <Sidebar
           :items="items"
+          hover-color="#f0f0f0"
+          active-color="#dfeaff"
+          active-border-color="#b6d5fb"
           @item-clicked="handleClick"
           @item-right-clicked="handleRightClick"
         />
@@ -50,6 +53,7 @@ import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
 import * as ipc from '../ipc';
+import ContextMenu from '@imengyu/vue3-context-menu';
 import type { DirectoryItem } from './types';
 
 const items = ref<DirectoryItem[]>([]);
@@ -103,7 +107,38 @@ function handleClick(item: DirectoryItem) {
   }
 }
 
-function handleRightClick(item: { name: string }, event: MouseEvent) {
-  console.log('handleRightClick', item, event);
+function handleRightClick(item: DirectoryItem, event: MouseEvent) {
+  let items = [];
+
+  if (item.type === 'folder') {
+    items = [
+      {
+        label: 'New File...',
+        onClick: () => console.log('New File', item),
+      },
+      {
+        label: 'New Folder...',
+        onClick: () => console.log('New Folder', item),
+      },
+      {
+        label: 'Delete',
+        onClick: () => console.log('Delete', item),
+      },
+    ];
+  } else {
+    items = [
+      {
+        label: 'Delete',
+        onClick: () => console.log('Delete', item),
+      },
+    ];
+  }
+
+  ContextMenu.showContextMenu({
+    x: event.clientX,
+    y: event.clientY,
+    items,
+    preserveIconWidth: false,
+  });
 }
 </script>

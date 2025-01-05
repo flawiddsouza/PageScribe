@@ -47,6 +47,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@imengyu/vue3-context-menu": "^1.4.4",
     "@vscode/codicons": "^0.0.36",
     "electron-squirrel-startup": "^1.0.1",
     "splitpanes": "^3.1.5",

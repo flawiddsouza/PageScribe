@@ -11,6 +11,9 @@
       :item="item"
       :level="0"
       :selected-items="selectedItems"
+      :hover-color="hoverColor"
+      :active-color="activeColor"
+      :active-border-color="activeBorderColor"
       @item-clicked="handleItemClick"
       @item-right-clicked="handleItemRightClick"
     />
@@ -22,7 +25,12 @@ import { ref, useTemplateRef, toRaw } from 'vue';
 import SidebarItem from './SidebarItem.vue';
 import type { DirectoryItem } from './types';
 
-const props = defineProps<{ items: DirectoryItem[] }>();
+const props = defineProps<{
+  items: DirectoryItem[],
+  hoverColor: string,
+  activeColor: string,
+  activeBorderColor: string,
+}>();
 
 const sidebarRef = useTemplateRef('sidebar');
 

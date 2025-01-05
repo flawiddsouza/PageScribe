@@ -14,6 +14,9 @@
       :item="child"
       :level="level + 1"
       :selected-items="selectedItems"
+      :hover-color="hoverColor"
+      :active-color="activeColor"
+      :active-border-color="activeBorderColor"
       @item-clicked="handleChildClick"
       @item-right-clicked="handleChildRightClick"
     />
@@ -25,7 +28,14 @@ import { ref, computed } from 'vue';
 import '@vscode/codicons/dist/codicon.css';
 import type { DirectoryItem } from './types';
 
-const props = defineProps<{ item: DirectoryItem, level: number, selectedItems: Set<DirectoryItem> }>();
+const props = defineProps<{
+  item: DirectoryItem,
+  level: number,
+  selectedItems: Set<DirectoryItem>,
+  hoverColor: string,
+  activeColor: string,
+  activeBorderColor: string,
+}>();
 const emit = defineEmits(['item-clicked', 'item-right-clicked']);
 const isOpen = ref(true);
 const leftMargin = 20;
@@ -66,14 +76,16 @@ function handleRightClick(event: MouseEvent) {
   cursor: pointer;
   padding: 5px;
   width: 100%;
+  border: 2px solid transparent;
 }
 
 .folder-item:hover {
-  background-color: #e0e0e0;
+  background-color: v-bind(hoverColor);
 }
 
 .folder-item.active {
-  background-color: #d0d0d0;
+  background-color: v-bind(activeColor);
+  border-color: v-bind(activeBorderColor);
 }
 
 .icon {

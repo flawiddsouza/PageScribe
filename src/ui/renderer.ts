@@ -1,6 +1,12 @@
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import './index.css';
 
 import { createApp } from 'vue';
 import App from './App.vue';
+import ContextMenu from '@imengyu/vue3-context-menu';
 
-createApp(App).mount('#app');
+const app = createApp(App);
+
+app.use(ContextMenu);
+
+app.mount('#app');
