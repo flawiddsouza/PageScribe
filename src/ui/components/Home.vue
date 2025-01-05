@@ -49,6 +49,7 @@ import { onBeforeMount, ref } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
+import * as ipc from '../ipc';
 import type { DirectoryItem } from './types';
 
 const items = ref<DirectoryItem[]>([]);
@@ -69,24 +70,24 @@ function resetView() {
 }
 
 async function openFolder() {
-  const result = await window.electron.ipcRenderer.openFolder();
-  if (result && !result.canceled && result.filePaths.length > 0) {
+  const folderPath = await ipc.openFolder();
+  if (folderPath !== null) {
     resetView();
-    const filePath = result.filePaths[0];
-    localStorage.setItem('lastOpenedFolder', filePath);
-    getDirectoryTree(filePath);
+    localStorage.setItem('lastOpenedFolder', folderPath);
+    getDirectoryTree(folderPath);
   }
 }
 
 async function getDirectoryTree(filePath: string) {
   document.title = filePath + ' - StoryScribe';
-  const directoryStructure = await window.electron.ipcRenderer.getDirectoryTree(filePath);
+  const directoryStructure = await ipc.getDirectoryTree(filePath);
   items.value = directoryStructure;
 }
 
 async function loadFile(filePath: string) {
   try {
-    const fileContent = await window.electron.ipcRenderer.readFile(filePath, localStorage.getItem('lastOpenedFolder'));
+    const basePath = localStorage.getItem('lastOpenedFolder');
+    const fileContent = await ipc.readFile(filePath, basePath);
     content.value = fileContent;
   } catch (error) {
     content.value = 'Error loading file: ' + error.message;
