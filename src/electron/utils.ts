@@ -1,11 +1,5 @@
 import { glob } from 'tinyglobby';
-
-interface DirectoryItem {
-  id: string
-  name: string;
-  type: 'folder' | 'file';
-  children?: DirectoryItem[];
-}
+import type { DirectoryItem } from '../ui/components/types';
 
 export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
   const result: DirectoryItem[] = [];
