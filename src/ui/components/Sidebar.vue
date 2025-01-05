@@ -4,6 +4,7 @@
     class="sidebar"
     tabindex="0"
     @click="deselectAllItems"
+    @contextmenu.prevent="handleSidebarRightClick"
   >
     <sidebar-item
       v-for="item in items"
@@ -40,7 +41,7 @@ const sidebarRef = useTemplateRef('sidebar');
 const selectedItems = ref<Set<DirectoryItem>>(new Set());
 const rightClickedItem = ref<DirectoryItem | null>(null);
 
-const emit = defineEmits(['item-clicked', 'item-right-clicked']);
+const emit = defineEmits(['item-clicked', 'item-right-clicked', 'sidebar-right-clicked']);
 
 function handleItemClick(item: DirectoryItem, event: MouseEvent) {
   const itemClone = structuredClone(toRaw(item));
@@ -69,6 +70,12 @@ function deselectAllItems(event: MouseEvent) {
   if (event.target === event.currentTarget) {
     selectedItems.value.clear();
     (event.target as HTMLElement).focus();
+  }
+}
+
+function handleSidebarRightClick(event: MouseEvent) {
+  if (event.target === event.currentTarget) {
+    emit('sidebar-right-clicked', event);
   }
 }
 

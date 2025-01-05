@@ -24,6 +24,7 @@
           @item-clicked="handleClick"
           @item-right-clicked="handleRightClick"
           :show-input="showSidebarItemInput"
+          @contextmenu.prevent="handleSidebarRightClick"
         />
       </pane>
       <pane
@@ -195,6 +196,51 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
     items: contextMenuItems,
     preserveIconWidth: false,
     onClose: () => sidebarRef.value.clearRightClickedItem(),
+  });
+}
+
+function handleSidebarRightClick(event: MouseEvent) {
+  const basePath = localStorage.getItem('lastOpenedFolder');
+
+  const handleCallback = async (success: boolean, value: string, type: 'file' | 'folder') => {
+    if (success && value) {
+      const createMethod = type === 'file' ? ipc.createFile : ipc.createFolder;
+      await createMethod(basePath, '', value);
+      getDirectoryTree(basePath);
+    }
+    showSidebarItemInput.value = null;
+  };
+
+  const contextMenuItems = [
+    {
+      label: 'New File...',
+      onClick() {
+        showSidebarItemInput.value = {
+          parentId: '',
+          type: 'file',
+          initialValue: '',
+          callback: (success, value) => handleCallback(success, value, 'file'),
+        };
+      },
+    },
+    {
+      label: 'New Folder...',
+      onClick() {
+        showSidebarItemInput.value = {
+          parentId: '',
+          type: 'folder',
+          initialValue: '',
+          callback: (success, value) => handleCallback(success, value, 'folder'),
+        };
+      },
+    },
+  ];
+
+  ContextMenu.showContextMenu({
+    x: event.clientX,
+    y: event.clientY,
+    items: contextMenuItems,
+    preserveIconWidth: false,
   });
 }
 </script>

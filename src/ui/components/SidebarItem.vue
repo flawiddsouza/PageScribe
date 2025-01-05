@@ -3,7 +3,7 @@
     :class="['folder-item', { active: isActive, 'right-clicked': isRightClicked }]"
     :style="{ paddingLeft: `${leftMargin + (level * 20)}px` }"
     @click="handleClick"
-    @contextmenu="handleRightClick"
+    @contextmenu.stop="handleRightClick"
   >
     <i :class="['codicon', item.type === 'folder' ? (isOpen ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
   </div>
