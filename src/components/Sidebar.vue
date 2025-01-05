@@ -1,14 +1,20 @@
 <template>
   <div class="sidebar">
-    <div class="folder-list">
-      <folder-item v-for="item in items" :key="item.id" :item="item" :level="0" @item-clicked="handleItemClick"></folder-item>
-    </div>
+    <sidebar-item
+      v-for="item in items"
+      :key="item.id"
+      :item="item"
+      :level="0"
+      :selected-items="selectedItems"
+      @item-clicked="handleItemClick"
+      @item-right-clicked="handleItemRightClick"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import FolderItem from './FolderItem.vue';
+import SidebarItem from './SidebarItem.vue';
 
 interface Item {
   id: number;
@@ -17,53 +23,38 @@ interface Item {
   children?: Item[];
 }
 
-const items = ref<Item[]>([
-  {
-    id: 1,
-    name: 'Folder 1',
-    type: 'folder',
-    children: [
-      { id: 2, name: 'Subfolder 1-1', type: 'folder', children: [
-        { id: 7, name: 'Subfolder 1-1-1', type: 'folder', children: [
-          { id: 8, name: 'File 1-1-1-1', type: 'file' }
-        ]},
-        { id: 9, name: 'File 1-1-1', type: 'file' }
-      ]},
-      { id: 3, name: 'File 1-1', type: 'file' }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Folder 2',
-    type: 'folder',
-    children: [
-      { id: 5, name: 'File 2-1', type: 'file' }
-    ]
-  },
-  {
-    id: 6,
-    name: 'File 1',
-    type: 'file'
+defineProps<{ items: Item[] }>();
+
+const selectedItems = ref<Set<Item>>(new Set());
+
+const emit = defineEmits(['item-clicked', 'item-right-clicked']);
+
+function handleItemClick(item: Item, event: MouseEvent) {
+  if (event.ctrlKey) {
+    if (selectedItems.value.has(item)) {
+      selectedItems.value.delete(item);
+    } else {
+      selectedItems.value.add(item);
+    }
+  } else {
+    // Deselect all items
+    selectedItems.value.clear();
+    selectedItems.value.add(item);
   }
-]);
+  emit('item-clicked', item, event);
+}
 
-const emit = defineEmits(['item-clicked']);
-
-function handleItemClick(itemName: string) {
-  emit('item-clicked', itemName);
+function handleItemRightClick(item: Item, event: MouseEvent) {
+  event.preventDefault();
+  emit('item-right-clicked', item, event);
 }
 </script>
 
 <style scoped>
 .sidebar {
-  width: 250px;
+  height: 100%;
+  overflow-y: auto;
   background-color: #f4f4f4;
-  padding: 10px;
   user-select: none;
-}
-
-.folder-list {
-  padding: 0;
-  margin: 0;
 }
 </style>
