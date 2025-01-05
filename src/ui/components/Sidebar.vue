@@ -1,5 +1,10 @@
 <template>
-  <div class="sidebar">
+  <div
+    ref="sidebar"
+    class="sidebar"
+    tabindex="0"
+    @click="deselectAllItems"
+  >
     <sidebar-item
       v-for="item in items"
       :key="item.id"
@@ -13,17 +18,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, useTemplateRef, toRaw } from 'vue';
 import SidebarItem from './SidebarItem.vue';
 import type { DirectoryItem } from './types';
 
-defineProps<{ items: DirectoryItem[] }>();
+const props = defineProps<{ items: DirectoryItem[] }>();
+
+const sidebarRef = useTemplateRef('sidebar');
 
 const selectedItems = ref<Set<DirectoryItem>>(new Set());
 
 const emit = defineEmits(['item-clicked', 'item-right-clicked']);
 
 function handleItemClick(item: DirectoryItem, event: MouseEvent) {
+  const itemClone = structuredClone(toRaw(item));
+  delete itemClone.children;
   if (event.ctrlKey) {
     if (selectedItems.value.has(item)) {
       selectedItems.value.delete(item);
@@ -34,14 +43,29 @@ function handleItemClick(item: DirectoryItem, event: MouseEvent) {
     // Deselect all items
     selectedItems.value.clear();
     selectedItems.value.add(item);
+    emit('item-clicked', item, event);
   }
-  emit('item-clicked', item, event);
 }
 
 function handleItemRightClick(item: DirectoryItem, event: MouseEvent) {
   event.preventDefault();
   emit('item-right-clicked', item, event);
 }
+
+function deselectAllItems(event: MouseEvent) {
+  if (event.target === event.currentTarget) {
+    selectedItems.value.clear();
+    (event.target as HTMLElement).focus();
+  }
+}
+
+// if focus is within sidebar and I press ctrl + a, select all items
+window.addEventListener('keydown', (event) => {
+  if (sidebarRef.value && sidebarRef.value.contains(document.activeElement) && event.ctrlKey && event.key === 'a') {
+    event.preventDefault();
+    selectedItems.value = new Set(props.items);
+  }
+});
 </script>
 
 <style scoped>
