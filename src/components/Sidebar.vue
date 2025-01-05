@@ -54,7 +54,6 @@ function handleItemRightClick(item: Item, event: MouseEvent) {
 .sidebar {
   height: 100%;
   overflow-y: auto;
-  background-color: #f4f4f4;
   user-select: none;
 }
 </style>
