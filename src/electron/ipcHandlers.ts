@@ -36,9 +36,9 @@ ipcMain.handle('write-file', async (event, basePath: string, filePath: string, f
 });
 
 ipcMain.handle('delete-file', async (event, basePath: string, filePath: string) => {
-  await fs.unlink(path.join(basePath, filePath));
+  await fs.rm(path.join(basePath, filePath));
 });
 
 ipcMain.handle('delete-folder', async (event, basePath: string, folderPath: string) => {
-  await fs.rmdir(path.join(basePath, folderPath), { recursive: true });
+  await fs.rm(path.join(basePath, folderPath), { recursive: true });
 });

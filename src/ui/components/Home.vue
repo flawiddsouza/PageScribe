@@ -103,7 +103,7 @@ async function loadFile(filePath: string) {
     const fileContent = await ipc.readFile(basePath, filePath);
     rendererRef.value.innerHTML = '';
     const { default: TextRenderer } = await import('../../../plugins/text-renderer/text-renderer.js');
-    rendererInstance = new TextRenderer(rendererRef.value);
+    rendererInstance = new TextRenderer(rendererRef.value, () => saveCurrentlyOpenFile());
     rendererInstance.render(fileContent);
   } catch (error) {
     rendererRef.value.innerHTML = 'Error loading file: ' + error.message;
