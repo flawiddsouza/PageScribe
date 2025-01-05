@@ -25,3 +25,7 @@ export async function createFile(fileName: string, folderPath: string, basePath:
 export async function createFolder(folderName: string, folderPath: string, basePath: string): Promise<void> {
   await window.electron.ipcRenderer.createFolder(folderName, folderPath, basePath);
 }
+
+export async function writeFile(basePath: string, filePath: string, fileContent: string): Promise<void> {
+  await window.electron.ipcRenderer.writeFile(basePath, filePath, fileContent);
+}

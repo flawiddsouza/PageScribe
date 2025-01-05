@@ -30,3 +30,7 @@ ipcMain.handle('create-file', async (event, fileName: string, folderPath: string
 ipcMain.handle('create-folder', async (event, folderName: string, folderPath: string, basePath: string) => {
   await fs.mkdir(path.join(basePath, folderPath, folderName));
 });
+
+ipcMain.handle('write-file', async (event, basePath: string, filePath: string, fileContent: string) => {
+  await fs.writeFile(path.join(basePath, filePath), fileContent);
+});

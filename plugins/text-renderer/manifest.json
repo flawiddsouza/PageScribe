@@ -1,0 +1,13 @@
+{
+  "manifest_version": 1,
+  "name": "Text Renderer",
+  "version": "1.0.0",
+  "description": "A plugin that renders text",
+  "contributes" : {
+    "renderer": {
+      "file": {
+        "txt": "text-renderer.js"
+      }
+    }
+  }
+}

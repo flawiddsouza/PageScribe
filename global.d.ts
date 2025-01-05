@@ -11,6 +11,7 @@ declare global {
         readFile: (filePath: string, basePath: string) => Promise<string>;
         createFile: (fileName: string, folderPath: string, basePath: string) => Promise<void>;
         createFolder: (folderName: string, folderPath: string, basePath: string) => Promise<void>;
+        writeFile: (basePath: string, filePath: string, fileContent: string) => Promise<void>;
       };
     };
   }

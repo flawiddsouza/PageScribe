@@ -35,11 +35,7 @@
           style="height: 100%; display: grid; grid-template-rows: auto 1fr;"
         >
           <div>{{ clickedItem.id }}</div>
-          <textarea
-            v-model="content"
-            style="width: 100%; height: 100%; resize: none; padding: 1rem;"
-            spellcheck="false"
-          />
+          <div ref="renderer" style="height: 100%; overflow: hidden;"></div>
         </div>
         <div v-else>
           <p>Click on a file to view its content.</p>
@@ -59,21 +55,30 @@ import ContextMenu from '@imengyu/vue3-context-menu';
 import type { DirectoryItem, ShowInput } from './types';
 
 const sidebarRef = useTemplateRef('sidebar');
+const rendererRef = useTemplateRef('renderer');
 const items = ref<DirectoryItem[]>([]);
 const clickedItem = ref<DirectoryItem|null>(null);
-const content = ref('');
 const showSidebarItemInput = ref<ShowInput | null>(null);
+let rendererInstance: any = null
 
 onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
   if (lastOpenedFolder) {
     getDirectoryTree(lastOpenedFolder);
   }
+
+  window.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault();
+      if (clickedItem.value) {
+        saveCurrentlyOpenFile();
+      }
+    }
+  });
 });
 
 function resetView() {
   clickedItem.value = null;
-  content.value = '';
   items.value = [];
 }
 
@@ -96,9 +101,21 @@ async function loadFile(filePath: string) {
   try {
     const basePath = localStorage.getItem('lastOpenedFolder');
     const fileContent = await ipc.readFile(filePath, basePath);
-    content.value = fileContent;
+    rendererRef.value.innerHTML = '';
+    const { default: TextRenderer } = await import('../../../plugins/text-renderer/text-renderer.js');
+    rendererInstance = new TextRenderer(rendererRef.value);
+    rendererInstance.render(fileContent);
   } catch (error) {
-    content.value = 'Error loading file: ' + error.message;
+    rendererRef.value.innerHTML = 'Error loading file: ' + error.message;
+  }
+}
+
+async function saveCurrentlyOpenFile() {
+  try {
+    const basePath = localStorage.getItem('lastOpenedFolder');
+    await ipc.writeFile(basePath, clickedItem.value.id, rendererInstance.getFileContent());
+  } catch (error) {
+    alert('Error saving file: ' + error.message);
   }
 }
 
@@ -107,7 +124,7 @@ function handleClick(item: DirectoryItem) {
   if (item.type === 'file') {
     loadFile(item.id);
   } else {
-    content.value = 'Directory selected. Click on a file to view its content.';
+    rendererRef.value.innerHTML = 'Directory selected. Click on a file to view its content.';
   }
 }
 
