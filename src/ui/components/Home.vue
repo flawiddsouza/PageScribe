@@ -16,13 +16,14 @@
           Open Folder
         </button>
         <Sidebar
+          ref="sidebar"
           :items="items"
           hover-color="#f0f0f0"
           active-color="#dfeaff"
           active-border-color="#b6d5fb"
           @item-clicked="handleClick"
           @item-right-clicked="handleRightClick"
-          ref="sidebar"
+          :show-input="showSidebarItemInput"
         />
       </pane>
       <pane
@@ -55,12 +56,13 @@ import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
 import * as ipc from '../ipc';
 import ContextMenu from '@imengyu/vue3-context-menu';
-import type { DirectoryItem } from './types';
+import type { DirectoryItem, ShowInput } from './types';
 
 const sidebarRef = useTemplateRef('sidebar');
 const items = ref<DirectoryItem[]>([]);
 const clickedItem = ref<DirectoryItem|null>(null);
 const content = ref('');
+const showSidebarItemInput = ref<ShowInput | null>(null);
 
 onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
@@ -110,17 +112,47 @@ function handleClick(item: DirectoryItem) {
 }
 
 function handleRightClick(item: DirectoryItem, event: MouseEvent) {
-  let items = [];
+  let contextMenuItems = [];
 
   if (item.type === 'folder') {
-    items = [
+    contextMenuItems = [
       {
         label: 'New File...',
-        onClick: () => console.log('New File', item),
+        onClick() {
+          console.log('New File Start', item)
+          showSidebarItemInput.value = {
+            parentId: item.id,
+            type: 'file',
+            initialValue: '',
+            callback(success: boolean, value: string) {
+              if (success && value) {
+                const basePath = localStorage.getItem('lastOpenedFolder');
+                ipc.createFile(value, item.id, basePath);
+                getDirectoryTree(basePath);
+              }
+              showSidebarItemInput.value = null;
+            },
+          };
+        },
       },
       {
         label: 'New Folder...',
-        onClick: () => console.log('New Folder', item),
+        onClick() {
+          console.log('New Folder Start', item)
+          showSidebarItemInput.value = {
+            parentId: item.id,
+            type: 'folder',
+            initialValue: '',
+            async callback(success: boolean, value: string) {
+              if (success && value) {
+                const basePath = localStorage.getItem('lastOpenedFolder');
+                await ipc.createFolder(value, item.id, basePath);
+                getDirectoryTree(basePath);
+              }
+              showSidebarItemInput.value = null;
+            },
+          };
+        },
       },
       {
         label: 'Delete',
@@ -128,7 +160,7 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
       },
     ];
   } else {
-    items = [
+    contextMenuItems = [
       {
         label: 'Delete',
         onClick: () => console.log('Delete', item),
@@ -139,7 +171,7 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
   ContextMenu.showContextMenu({
     x: event.clientX,
     y: event.clientY,
-    items,
+    items: contextMenuItems,
     preserveIconWidth: false,
     onClose: () => sidebarRef.value.clearRightClickedItem(),
   });

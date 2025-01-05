@@ -17,6 +17,7 @@
       :active-border-color="activeBorderColor"
       @item-clicked="handleItemClick"
       @item-right-clicked="handleItemRightClick"
+      :show-input="showInput"
     />
   </div>
 </template>
@@ -24,13 +25,14 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, toRaw } from 'vue';
 import SidebarItem from './SidebarItem.vue';
-import type { DirectoryItem } from './types';
+import type { DirectoryItem, ShowInput } from './types';
 
 const props = defineProps<{
   items: DirectoryItem[],
   hoverColor: string,
   activeColor: string,
   activeBorderColor: string,
+  showInput: ShowInput | null,
 }>();
 
 const sidebarRef = useTemplateRef('sidebar');

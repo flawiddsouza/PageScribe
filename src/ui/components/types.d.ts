@@ -4,3 +4,10 @@ export interface DirectoryItem {
   type: 'folder' | 'file';
   children?: DirectoryItem[];
 }
+
+export interface ShowInput {
+  parentId: string;
+  type: 'file' | 'folder';
+  initialValue: string;
+  callback: (success: boolean, value: string) => void;
+}

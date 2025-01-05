@@ -7,6 +7,18 @@
   >
     <i :class="['codicon', item.type === 'folder' ? (isOpen ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
   </div>
+  <div class="folder-item" v-if="showInput && item.id === showInput.parentId" :style="{ paddingLeft: `${leftMargin + ((level + 1) * 20)}px` }">
+    <i :class="['codicon', showInput.type === 'folder' ? 'codicon-chevron-right' : 'codicon-file', 'icon']" />
+    <input
+      type="text"
+      :value="showInput.initialValue"
+      @keyup.enter="(event) => showInput.callback(true, (event.target as HTMLInputElement).value)"
+      @keyup.escape="() => showInput.callback(false, '')"
+      @blur="(event) => showInput && showInput.callback(true, (event.target as HTMLInputElement).value)"
+      placeholder="Enter name"
+      v-focus
+    >
+  </div>
   <div v-if="item.children && item.type === 'folder' && isOpen">
     <sidebar-item
       v-for="child in item.children"
@@ -20,14 +32,15 @@
       :active-border-color="activeBorderColor"
       @item-clicked="handleChildClick"
       @item-right-clicked="handleChildRightClick"
+      :show-input="showInput"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import '@vscode/codicons/dist/codicon.css';
-import type { DirectoryItem } from './types';
+import type { DirectoryItem, ShowInput } from './types';
 
 const props = defineProps<{
   item: DirectoryItem,
@@ -37,10 +50,14 @@ const props = defineProps<{
   hoverColor: string,
   activeColor: string,
   activeBorderColor: string,
+  showInput: ShowInput | null,
 }>();
+
 const emit = defineEmits(['item-clicked', 'item-right-clicked']);
-const isOpen = ref(true);
+
 const leftMargin = 20;
+
+const isOpen = ref(true);
 
 const isActive = computed(() => {
   return Array.from(props.selectedItems).some(selectedItem => selectedItem.id === props.item.id);
@@ -48,6 +65,13 @@ const isActive = computed(() => {
 
 const isRightClicked = computed(() => {
   return props.rightClickedItem?.id === props.item.id;
+});
+
+// auto open folder when input is shown
+watch(() => props.showInput, (showInput) => {
+  if (showInput && showInput.parentId === props.item.id) {
+    isOpen.value = true;
+  }
 });
 
 function toggle() {
@@ -73,28 +97,42 @@ function handleRightClick(event: MouseEvent) {
   event.preventDefault();
   emit('item-right-clicked', props.item, event);
 }
+
+const vFocus = {
+  mounted(element: HTMLElement) {
+    element.focus();
+  }
+};
 </script>
 
 <style scoped>
 .folder-item {
   display: flex;
   align-items: center;
-  cursor: pointer;
   padding: 5px;
   width: 100%;
   border: 2px solid transparent;
 }
 
-.folder-item:hover {
+.folder-item:hover:not(input) {
+  cursor: pointer;
   background-color: v-bind(hoverColor);
 }
 
-.folder-item.active {
+.folder-item.active:not(input) {
   background-color: v-bind(activeColor);
 }
 
 .folder-item.right-clicked {
   border-color: v-bind(activeBorderColor);
+}
+
+.folder-item input {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  font: inherit;
 }
 
 .icon {

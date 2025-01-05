@@ -22,3 +22,11 @@ ipcMain.handle('read-file', async (event, filePath: string, basePath: string) =>
   const fileContent = await fs.readFile(path.join(basePath, filePath), 'utf8');
   return fileContent;
 });
+
+ipcMain.handle('create-file', async (event, fileName: string, folderPath: string, basePath: string) => {
+  await fs.writeFile(path.join(basePath, folderPath, fileName), '');
+});
+
+ipcMain.handle('create-folder', async (event, folderName: string, folderPath: string, basePath: string) => {
+  await fs.mkdir(path.join(basePath, folderPath, folderName));
+});

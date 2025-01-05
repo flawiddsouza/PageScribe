@@ -17,3 +17,11 @@ export async function readFile(filePath: string, basePath: string): Promise<stri
   const fileContent = await window.electron.ipcRenderer.readFile(filePath, basePath);
   return fileContent;
 }
+
+export async function createFile(fileName: string, folderPath: string, basePath: string): Promise<void> {
+  await window.electron.ipcRenderer.createFile(fileName, folderPath, basePath);
+}
+
+export async function createFolder(folderName: string, folderPath: string, basePath: string): Promise<void> {
+  await window.electron.ipcRenderer.createFolder(folderName, folderPath, basePath);
+}
