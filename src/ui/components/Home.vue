@@ -170,7 +170,16 @@ function createContextMenuItems(item: DirectoryItem) {
   };
 
   const handleDelete = async (type: 'file' | 'folder') => {
-    if (confirm(`Are you sure you want to delete ${item.id}?`)) {
+    let message = `Are you sure you want to delete "${item.name}"`;
+
+    if (type === 'folder') {
+      message += ' and its contents';
+    }
+
+    message += '?';
+
+    const confirmed = await smalltalk.confirm(`Delete ${type}`, message).then(() => true).catch(() => false);
+    if (confirmed) {
       const deleteMethod = type === 'file' ? ipc.deleteFile : ipc.deleteFolder;
       await deleteMethod(basePath, item.id);
       getDirectoryTree(basePath);
