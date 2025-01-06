@@ -121,9 +121,12 @@ async function loadFile(filePath: string) {
 
     if (plugin) {
       rendererRef.value.innerHTML = '';
+      const mountPoint = document.createElement('div');
+      mountPoint.style.height = '100%';
+      rendererRef.value.appendChild(mountPoint);
       const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${plugin.folder}/${plugin.contributes[0].meta.renderer}`);
       rendererInstance = new Renderer({
-        mountPoint: rendererRef.value,
+        mountPoint,
         onUpdateCallback: () => saveCurrentlyOpenFile(),
         fontFamily: 'monospace',
         fontSize: '14px',
