@@ -10,6 +10,7 @@
         style="display: grid; grid-template-rows: auto 1fr;"
       >
         <button
+          class="no-radius"
           style="width: 100%;"
           @click="openFolder"
         >
@@ -104,7 +105,12 @@ async function loadFile(filePath: string) {
     const fileContent = await ipc.readFile(basePath, filePath);
     rendererRef.value.innerHTML = '';
     const { default: TextRenderer } = await import('../../../plugins/text-renderer/text-renderer.js');
-    rendererInstance = new TextRenderer(rendererRef.value, () => saveCurrentlyOpenFile());
+    rendererInstance = new TextRenderer({
+      mountPoint: rendererRef.value,
+      onUpdateCallback: () => saveCurrentlyOpenFile(),
+      fontFamily: 'monospace',
+      fontSize: '14px',
+    });
     rendererInstance.render(fileContent);
   } catch (error) {
     rendererRef.value.innerHTML = 'Error loading file: ' + error.message;

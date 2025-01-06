@@ -11,3 +11,26 @@ body {
 .splitpanes__pane {
   background-color: white !important;
 }
+
+button {
+  background-color: #6c757d;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 16px;
+  transition: background-color 0.3s ease;
+}
+
+button.no-radius {
+  border-radius: 0;
+}
+
+button:hover {
+  background-color: #5a6268;
+}
+
+button:focus {
+  outline: none;
+}
