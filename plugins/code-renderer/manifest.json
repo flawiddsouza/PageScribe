@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "name": "Text Renderer",
+  "name": "Code Renderer",
   "version": "1.0.0",
-  "description": "A plugin that renders text",
+  "description": "A plugin that renders code",
   "contributes": [
     {
       "type": "renderer",
@@ -10,7 +10,9 @@
         "type": "file",
         "renderer": "index.js",
         "supportedExtensions": [
-          ".txt"
+          ".ts",
+          ".css",
+          ".vue"
         ]
       }
     }
