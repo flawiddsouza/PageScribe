@@ -9,7 +9,12 @@
       "meta": {
         "type": "file",
         "renderer": "text-renderer.js",
-        "supportedExtensions": ["txt"]
+        "supportedExtensions": [
+          "txt",
+          "ts",
+          "css",
+          "vue"
+        ]
       }
     }
   ]
