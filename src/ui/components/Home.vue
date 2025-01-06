@@ -53,7 +53,6 @@
 <script setup lang="ts">
 import { nextTick, onBeforeMount, ref, useTemplateRef } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
-import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
 import * as ipc from '../ipc';
 import ContextMenu from '@imengyu/vue3-context-menu';

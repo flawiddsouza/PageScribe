@@ -8,10 +8,6 @@ body {
   margin: 0;
 }
 
-.splitpanes__pane {
-  background-color: white !important;
-}
-
 button {
   background-color: #6c757d;
   border: none;

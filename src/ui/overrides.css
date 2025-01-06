@@ -1,0 +1,13 @@
+/* splitpanes */
+
+.splitpanes__pane {
+  background-color: white !important;
+}
+
+.splitpanes__splitter {
+  background-color: #f1f1f1 !important;
+}
+
+.splitpanes__splitter:hover {
+  background-color: #e9967a !important;
+}

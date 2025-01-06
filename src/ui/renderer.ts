@@ -1,4 +1,6 @@
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
+import 'splitpanes/dist/splitpanes.css';
+import './overrides.css';
 import './index.css';
 
 import { createApp } from 'vue';
