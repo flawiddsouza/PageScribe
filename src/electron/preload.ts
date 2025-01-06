@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('electron', {
     writeFile: (basePath: string, filePath: string, fileContent: string) => ipcRenderer.invoke('write-file', basePath, filePath, fileContent),
     deleteFile: (basePath: string, filePath: string) => ipcRenderer.invoke('delete-file', basePath, filePath),
     deleteFolder: (basePath: string, folderPath: string) => ipcRenderer.invoke('delete-folder', basePath, folderPath),
+    renameFile: (basePath: string, oldFilePath: string, newFileName: string) => ipcRenderer.invoke('rename-file', basePath, oldFilePath, newFileName),
+    renameFolder: (basePath: string, oldFolderPath: string, newFolderName: string) => ipcRenderer.invoke('rename-folder', basePath, oldFolderPath, newFolderName),
     getPluginManifests: () => ipcRenderer.invoke('get-plugin-manifests'),
   }
 });

@@ -44,6 +44,16 @@ ipcMain.handle('delete-folder', async (event, basePath: string, folderPath: stri
   await fs.rm(path.join(basePath, folderPath), { recursive: true });
 });
 
+ipcMain.handle('rename-file', async (event, basePath: string, oldFilePath: string, newFileName: string) => {
+  const newFilePath = path.join(path.dirname(oldFilePath), newFileName);
+  await fs.rename(path.join(basePath, oldFilePath), path.join(basePath, newFilePath));
+});
+
+ipcMain.handle('rename-folder', async (event, basePath: string, oldFolderPath: string, newFolderName: string) => {
+  const newFolderPath = path.join(path.dirname(oldFolderPath), newFolderName);
+  await fs.rename(path.join(basePath, oldFolderPath), path.join(basePath, newFolderPath));
+});
+
 ipcMain.handle('get-plugin-manifests', async () => {
   const pluginDir = path.join(__dirname, '../../plugins');
   const pluginFolders = await fs.readdir(pluginDir);

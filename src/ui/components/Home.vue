@@ -59,6 +59,8 @@ import { Splitpanes, Pane } from 'splitpanes';
 import Sidebar from './Sidebar.vue';
 import * as ipc from '../ipc';
 import ContextMenu from '@imengyu/vue3-context-menu';
+import smalltalk from 'smalltalk';
+
 import type { DirectoryItem, PluginManifest, ShowInput } from './types';
 
 const sidebarRef = useTemplateRef('sidebar');
@@ -175,6 +177,15 @@ function createContextMenuItems(item: DirectoryItem) {
     }
   };
 
+  const handleRename = async (type: 'file' | 'folder') => {
+    const newName = await smalltalk.prompt(`Rename ${type}`, `Enter new name for ${item.name}:`, item.name).catch(() => null);
+    if (newName) {
+      const renameMethod = type === 'file' ? ipc.renameFile : ipc.renameFolder;
+      await renameMethod(basePath, item.id, newName);
+      getDirectoryTree(basePath);
+    }
+  };
+
   if (item.type === 'folder') {
     return [
       {
@@ -200,12 +211,20 @@ function createContextMenuItems(item: DirectoryItem) {
         },
       },
       {
+        label: 'Rename',
+        onClick: () => handleRename('folder'),
+      },
+      {
         label: 'Delete',
         onClick: () => handleDelete('folder'),
       },
     ];
   } else {
     return [
+      {
+        label: 'Rename',
+        onClick: () => handleRename('file'),
+      },
       {
         label: 'Delete',
         onClick: () => handleDelete('file'),
