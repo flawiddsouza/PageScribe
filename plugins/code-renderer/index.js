@@ -20,6 +20,8 @@ export default class {
     const editor = monaco.editor.create(this.#mountPoint, {
       value: this.#text,
       theme: 'vs-light',
+      fontFamily: this.#fontFamily,
+      fontSize: this.#fontSize,
       padding: {
         top: 15
       },

@@ -128,7 +128,7 @@ async function loadFile(filePath: string) {
       rendererInstance = new Renderer({
         mountPoint,
         onUpdateCallback: () => saveCurrentlyOpenFile(),
-        fontFamily: 'monospace',
+        fontFamily: 'Consolas, "Courier New", monospace',
         fontSize: '14px',
       });
       rendererInstance.render(readFileResult.fileContent);

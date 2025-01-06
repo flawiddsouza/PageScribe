@@ -20,7 +20,7 @@ export default class {
     textarea.style.resize = 'none';
     textarea.style.padding = '1rem';
     textarea.style.outline = 'none';
-    textarea.style.border = '1px solid lightgrey';
+    textarea.style.border = '0';
     textarea.style.fontFamily = this.#fontFamily;
     textarea.style.fontSize = this.#fontSize;
     textarea.spellcheck = false;
