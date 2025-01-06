@@ -3,6 +3,12 @@
     ref="sidebar"
     class="sidebar"
     tabindex="0"
+    :style="{
+      '--font-size': fontSize,
+      '--hover-color': colors.hoverColor,
+      '--active-color': colors.activeColor,
+      '--active-border-color': colors.activeBorderColor
+    }"
     @click="deselectAllItems"
     @contextmenu.prevent="handleSidebarRightClick"
   >
@@ -13,9 +19,6 @@
       :level="0"
       :selected-items="selectedItems"
       :right-clicked-item="rightClickedItem"
-      :hover-color="hoverColor"
-      :active-color="activeColor"
-      :active-border-color="activeBorderColor"
       :show-input="showInput"
       @item-clicked="handleItemClick"
       @item-right-clicked="handleItemRightClick"
@@ -30,9 +33,12 @@ import type { DirectoryItem, ShowInput } from './types';
 
 const props = defineProps<{
   items: DirectoryItem[],
-  hoverColor: string,
-  activeColor: string,
-  activeBorderColor: string,
+  fontSize: string,
+  colors: {
+    hoverColor: string,
+    activeColor: string,
+    activeBorderColor: string,
+  },
   showInput: ShowInput | null,
 }>();
 
@@ -105,6 +111,7 @@ window.addEventListener('keydown', (event) => {
   border: 1px solid transparent;
   border-left-width: 2px;
   border-right-width: 2px;
+  font-size: var(--font-size);
 }
 
 .sidebar:focus {

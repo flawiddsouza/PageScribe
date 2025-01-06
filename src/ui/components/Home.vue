@@ -19,9 +19,12 @@
         <Sidebar
           ref="sidebar"
           :items="items"
-          hover-color="#f0f0f0"
-          active-color="#dfeaff"
-          active-border-color="#b6d5fb"
+          font-size="14px"
+          :colors="{
+            hoverColor: '#f0f0f0',
+            activeColor: '#dfeaff',
+            activeBorderColor: '#b6d5fb',
+          }"
           :show-input="showSidebarItemInput"
           @item-clicked="handleClick"
           @item-right-clicked="handleRightClick"

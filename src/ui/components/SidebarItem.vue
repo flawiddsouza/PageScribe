@@ -32,9 +32,6 @@
       :level="level + 1"
       :selected-items="selectedItems"
       :right-clicked-item="rightClickedItem"
-      :hover-color="hoverColor"
-      :active-color="activeColor"
-      :active-border-color="activeBorderColor"
       :show-input="showInput"
       @item-clicked="handleChildClick"
       @item-right-clicked="handleChildRightClick"
@@ -52,9 +49,6 @@ const props = defineProps<{
   level: number,
   selectedItems: Set<DirectoryItem>,
   rightClickedItem: DirectoryItem | null,
-  hoverColor: string,
-  activeColor: string,
-  activeBorderColor: string,
   showInput: ShowInput | null,
 }>();
 
@@ -121,15 +115,15 @@ const vFocus = {
 
 .folder-item:hover:not(input) {
   cursor: pointer;
-  background-color: v-bind(hoverColor);
+  background-color: var(--hover-color);
 }
 
 .folder-item.active:not(input) {
-  background-color: v-bind(activeColor);
+  background-color: var(--active-color);
 }
 
 .folder-item.right-clicked {
-  border-color: v-bind(activeBorderColor);
+  border-color: var(--active-border-color);
 }
 
 .folder-item input {
