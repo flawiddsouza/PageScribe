@@ -12,6 +12,11 @@ export interface ShowInput {
   callback: (success: boolean, value: string) => void;
 }
 
+export interface ReadFileResult {
+  extension: string;
+  fileContent: string;
+}
+
 export interface PluginManifest {
   folder: string;
   manifestVersion: number;

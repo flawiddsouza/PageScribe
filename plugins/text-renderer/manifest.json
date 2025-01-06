@@ -10,10 +10,10 @@
         "type": "file",
         "renderer": "text-renderer.js",
         "supportedExtensions": [
-          "txt",
-          "ts",
-          "css",
-          "vue"
+          ".txt",
+          ".ts",
+          ".css",
+          ".vue"
         ]
       }
     }

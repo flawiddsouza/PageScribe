@@ -110,13 +110,12 @@ async function getDirectoryTree(filePath: string) {
 async function loadFile(filePath: string) {
   try {
     const basePath = localStorage.getItem('lastOpenedFolder');
-    const fileContent = await ipc.readFile(basePath, filePath);
-    rendererRef.value.innerHTML = '';
+    const readFileResult = await ipc.readFile(basePath, filePath);
 
-    const fileExtension = filePath.split('.').pop();
-    const plugin = pluginManifests.find(manifest => manifest.contributes.some(contribution => contribution.meta.supportedExtensions.includes(fileExtension)));
+    const plugin = pluginManifests.find(manifest => manifest.contributes.some(contribution => contribution.meta.supportedExtensions.includes(readFileResult.extension)));
 
     if (plugin) {
+      rendererRef.value.innerHTML = '';
       const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${plugin.folder}/${plugin.contributes[0].meta.renderer}`);
       rendererInstance = new Renderer({
         mountPoint: rendererRef.value,
@@ -124,7 +123,7 @@ async function loadFile(filePath: string) {
         fontFamily: 'monospace',
         fontSize: '14px',
       });
-      rendererInstance.render(fileContent);
+      rendererInstance.render(readFileResult.fileContent);
     } else {
       rendererRef.value.innerHTML = 'No renderer found for this file type.';
     }

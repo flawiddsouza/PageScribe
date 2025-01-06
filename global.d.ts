@@ -1,6 +1,6 @@
 export {};
 
-import type { DirectoryItem, PluginManifest } from './src/ui/components/types';
+import type { DirectoryItem, PluginManifest, ReadFileResult } from './src/ui/components/types';
 
 declare global {
   interface Window {
@@ -8,7 +8,7 @@ declare global {
       ipcRenderer: {
         openFolder: () => Promise<{ canceled: boolean; filePaths: string[] }>;
         getDirectoryTree: (folderPath: string) => Promise<DirectoryItem[]>;
-        readFile: (basePath: string, filePath: string) => Promise<string>;
+        readFile: (basePath: string, filePath: string) => Promise<ReadFileResult>;
         createFile: (basePath: string, folderPath: string, fileName: string) => Promise<void>;
         createFolder: (basePath: string, folderPath: string, folderName: string) => Promise<void>;
         writeFile: (basePath: string, filePath: string, fileContent: string) => Promise<void>;

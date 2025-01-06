@@ -19,8 +19,9 @@ ipcMain.handle('get-directory-tree', async (event, folderPath: string) => {
 });
 
 ipcMain.handle('read-file', async (event, basePath: string, filePath: string) => {
+  const extension = path.extname(filePath);
   const fileContent = await fs.readFile(path.join(basePath, filePath), 'utf8');
-  return fileContent;
+  return { extension, fileContent };
 });
 
 ipcMain.handle('create-file', async (event, basePath: string, folderPath: string, fileName: string) => {

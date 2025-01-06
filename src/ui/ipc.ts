@@ -1,4 +1,4 @@
-import type { DirectoryItem, PluginManifest } from './components/types';
+import type { DirectoryItem, PluginManifest, ReadFileResult } from './components/types';
 
 export async function openFolder(): Promise<string | null> {
   const result = await window.electron.ipcRenderer.openFolder();
@@ -13,7 +13,7 @@ export async function getDirectoryTree(filePath: string): Promise<DirectoryItem[
   return directoryTree;
 }
 
-export async function readFile(basePath: string, filePath: string): Promise<string> {
+export async function readFile(basePath: string, filePath: string): Promise<ReadFileResult> {
   const fileContent = await window.electron.ipcRenderer.readFile(basePath, filePath);
   return fileContent;
 }
