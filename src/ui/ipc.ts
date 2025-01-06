@@ -1,4 +1,4 @@
-import type { DirectoryItem } from './components/types';
+import type { DirectoryItem, PluginManifest } from './components/types';
 
 export async function openFolder(): Promise<string | null> {
   const result = await window.electron.ipcRenderer.openFolder();
@@ -36,4 +36,9 @@ export async function deleteFile(basePath: string, filePath: string): Promise<vo
 
 export async function deleteFolder(basePath: string, folderPath: string): Promise<void> {
   await window.electron.ipcRenderer.deleteFolder(basePath, folderPath);
+}
+
+export async function getPluginManifests(): Promise<PluginManifest[]> {
+  const manifests = await window.electron.ipcRenderer.getPluginManifests();
+  return manifests;
 }

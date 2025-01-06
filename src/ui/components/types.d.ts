@@ -11,3 +11,19 @@ export interface ShowInput {
   initialValue: string;
   callback: (success: boolean, value: string) => void;
 }
+
+export interface PluginManifest {
+  folder: string;
+  manifestVersion: number;
+  name: string;
+  version: string;
+  description: string;
+  contributes: {
+    type: string;
+    meta: {
+      type: string;
+      renderer: string;
+      supportedExtensions: string[];
+    };
+  }[];
+}

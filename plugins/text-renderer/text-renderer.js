@@ -28,7 +28,7 @@ export default class {
     textarea.addEventListener('input', (e) => {
       this.#text = e.target.value;
       this.#onUpdateCallback();
-    })
+    });
     this.#mountPoint.appendChild(textarea);
     textarea.focus();
   }

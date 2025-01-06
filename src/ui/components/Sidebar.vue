@@ -16,9 +16,9 @@
       :hover-color="hoverColor"
       :active-color="activeColor"
       :active-border-color="activeBorderColor"
+      :show-input="showInput"
       @item-clicked="handleItemClick"
       @item-right-clicked="handleItemRightClick"
-      :show-input="showInput"
     />
   </div>
 </template>

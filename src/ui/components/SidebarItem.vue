@@ -8,16 +8,20 @@
   >
     <i :class="['codicon', item.type === 'folder' ? (isOpen ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
   </div>
-  <div class="folder-item" v-if="showInput && item.id === showInput.parentId" :style="{ paddingLeft: `${leftMargin + ((level + 1) * 20)}px` }">
+  <div
+    v-if="showInput && item.id === showInput.parentId"
+    class="folder-item"
+    :style="{ paddingLeft: `${leftMargin + ((level + 1) * 20)}px` }"
+  >
     <i :class="['codicon', showInput.type === 'folder' ? 'codicon-chevron-right' : 'codicon-file', 'icon']" />
     <input
+      v-focus
       type="text"
       :value="showInput.initialValue"
+      placeholder="Enter name"
       @keyup.enter="(event) => showInput.callback(true, (event.target as HTMLInputElement).value)"
       @keyup.escape="() => showInput.callback(false, '')"
       @blur="(event) => showInput && showInput.callback(true, (event.target as HTMLInputElement).value)"
-      placeholder="Enter name"
-      v-focus
     >
   </div>
   <div v-if="item.children && item.type === 'folder' && isOpen">
@@ -31,9 +35,9 @@
       :hover-color="hoverColor"
       :active-color="activeColor"
       :active-border-color="activeBorderColor"
+      :show-input="showInput"
       @item-clicked="handleChildClick"
       @item-right-clicked="handleChildRightClick"
-      :show-input="showInput"
     />
   </div>
 </template>

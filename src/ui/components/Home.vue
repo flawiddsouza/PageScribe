@@ -22,9 +22,9 @@
           hover-color="#f0f0f0"
           active-color="#dfeaff"
           active-border-color="#b6d5fb"
+          :show-input="showSidebarItemInput"
           @item-clicked="handleClick"
           @item-right-clicked="handleRightClick"
-          :show-input="showSidebarItemInput"
           @contextmenu.prevent="handleSidebarRightClick"
         />
       </pane>
@@ -37,7 +37,10 @@
           style="height: 100%; display: grid; grid-template-rows: auto 1fr;"
         >
           <div>{{ clickedItem.id }}</div>
-          <div ref="renderer" style="height: 100%; overflow: hidden;"></div>
+          <div
+            ref="renderer"
+            style="height: 100%; overflow: hidden;"
+          />
         </div>
         <div v-else>
           <p>Click on a file to view its content.</p>
@@ -54,20 +57,26 @@ import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
 import * as ipc from '../ipc';
 import ContextMenu from '@imengyu/vue3-context-menu';
-import type { DirectoryItem, ShowInput } from './types';
+import type { DirectoryItem, PluginManifest, ShowInput } from './types';
 
 const sidebarRef = useTemplateRef('sidebar');
 const rendererRef = useTemplateRef('renderer');
 const items = ref<DirectoryItem[]>([]);
 const clickedItem = ref<DirectoryItem|null>(null);
 const showSidebarItemInput = ref<ShowInput | null>(null);
-let rendererInstance: any = null
+let rendererInstance: {
+  render: (content: string) => void;
+  getFileContent: () => string;
+} = null;
+let pluginManifests: PluginManifest[] = [];
 
 onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
   if (lastOpenedFolder) {
     getDirectoryTree(lastOpenedFolder);
   }
+
+  pluginManifests = await ipc.getPluginManifests();
 
   window.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.key === 's') {
@@ -104,14 +113,22 @@ async function loadFile(filePath: string) {
     const basePath = localStorage.getItem('lastOpenedFolder');
     const fileContent = await ipc.readFile(basePath, filePath);
     rendererRef.value.innerHTML = '';
-    const { default: TextRenderer } = await import('../../../plugins/text-renderer/text-renderer.js');
-    rendererInstance = new TextRenderer({
-      mountPoint: rendererRef.value,
-      onUpdateCallback: () => saveCurrentlyOpenFile(),
-      fontFamily: 'monospace',
-      fontSize: '14px',
-    });
-    rendererInstance.render(fileContent);
+
+    const fileExtension = filePath.split('.').pop();
+    const plugin = pluginManifests.find(manifest => manifest.contributes.some(contribution => contribution.meta.supportedExtensions.includes(fileExtension)));
+
+    if (plugin) {
+      const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${plugin.folder}/${plugin.contributes[0].meta.renderer}`);
+      rendererInstance = new Renderer({
+        mountPoint: rendererRef.value,
+        onUpdateCallback: () => saveCurrentlyOpenFile(),
+        fontFamily: 'monospace',
+        fontSize: '14px',
+      });
+      rendererInstance.render(fileContent);
+    } else {
+      rendererRef.value.innerHTML = 'No renderer found for this file type.';
+    }
   } catch (error) {
     rendererRef.value.innerHTML = 'Error loading file: ' + error.message;
   }

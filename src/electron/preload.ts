@@ -10,5 +10,6 @@ contextBridge.exposeInMainWorld('electron', {
     writeFile: (basePath: string, filePath: string, fileContent: string) => ipcRenderer.invoke('write-file', basePath, filePath, fileContent),
     deleteFile: (basePath: string, filePath: string) => ipcRenderer.invoke('delete-file', basePath, filePath),
     deleteFolder: (basePath: string, folderPath: string) => ipcRenderer.invoke('delete-folder', basePath, folderPath),
+    getPluginManifests: () => ipcRenderer.invoke('get-plugin-manifests'),
   }
 });

@@ -1,6 +1,6 @@
 export {};
 
-import type { DirectoryItem } from './src/ui/components/types';
+import type { DirectoryItem, PluginManifest } from './src/ui/components/types';
 
 declare global {
   interface Window {
@@ -14,6 +14,7 @@ declare global {
         writeFile: (basePath: string, filePath: string, fileContent: string) => Promise<void>;
         deleteFile: (basePath: string, filePath: string) => Promise<void>;
         deleteFolder: (basePath: string, folderPath: string) => Promise<void>;
+        getPluginManifests: () => Promise<PluginManifest[]>;
       };
     };
   }
