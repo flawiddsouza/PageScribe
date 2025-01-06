@@ -1,5 +1,6 @@
 <template>
   <div
+    tabindex="0"
     :class="['folder-item', { active: isActive, 'right-clicked': isRightClicked }]"
     :style="{ paddingLeft: `${leftMargin + (level * 20)}px` }"
     @click="handleClick"

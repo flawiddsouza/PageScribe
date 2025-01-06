@@ -102,5 +102,14 @@ window.addEventListener('keydown', (event) => {
   overflow-y: auto;
   user-select: none;
   padding-bottom: 2rem;
+  border: 1px solid transparent;
+  border-left-width: 2px;
+  border-right-width: 2px;
+}
+
+.sidebar:focus {
+  border: 1px solid #3e79ff;
+  border-left-width: 2px;
+  border-right-width: 2px;
 }
 </style>
