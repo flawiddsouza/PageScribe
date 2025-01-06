@@ -112,24 +112,53 @@ async function getDirectoryTree(filePath: string) {
   items.value = directoryStructure;
 }
 
+function getPluginRenderer(type: 'renderer', metaType: 'file' | 'folder', extension: string) {
+  for (const manifest of pluginManifests) {
+    for (const contribution of manifest.contributes) {
+      if (contribution.type === type && contribution.meta.type === metaType && contribution.meta.supportedExtensions.includes(extension)) {
+        return {
+          folder: manifest.folder,
+          ...contribution.meta,
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
 async function loadFile(filePath: string) {
   try {
     const basePath = localStorage.getItem('lastOpenedFolder');
     const readFileResult = await ipc.readFile(basePath, filePath);
 
-    const plugin = pluginManifests.find(manifest => manifest.contributes.some(contribution => contribution.meta.supportedExtensions.includes(readFileResult.extension)));
+    let pluginRenderer = getPluginRenderer('renderer', 'file', readFileResult.extension);
 
-    if (plugin) {
+    if (pluginRenderer) {
       rendererRef.value.innerHTML = '';
       const mountPoint = document.createElement('div');
       mountPoint.style.height = '100%';
       rendererRef.value.appendChild(mountPoint);
-      const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${plugin.folder}/${plugin.contributes[0].meta.renderer}`);
+      const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${pluginRenderer.folder}/${pluginRenderer.renderer}`);
+
+      let fontFamily = '';
+      let fontSize = '';
+
+      if (pluginRenderer.fontHint === 'code') {
+        fontFamily = 'Consolas, "Courier New", monospace';
+        fontSize = '14px';
+      }
+
+      if (pluginRenderer.fontHint === 'text') {
+        fontFamily = 'Arial, sans-serif';
+        fontSize = '16px';
+      }
+
       rendererInstance = new Renderer({
         mountPoint,
         onUpdateCallback: () => saveCurrentlyOpenFile(),
-        fontFamily: 'Consolas, "Courier New", monospace',
-        fontSize: '14px',
+        fontFamily,
+        fontSize,
       });
       rendererInstance.render(readFileResult.fileContent);
     } else {

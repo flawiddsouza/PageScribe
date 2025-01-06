@@ -1,5 +1,7 @@
 import { glob } from 'tinyglobby';
-import type { DirectoryItem } from '../ui/components/types';
+import type { DirectoryItem, PluginManifest } from '../ui/components/types';
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
   const result: DirectoryItem[] = [];
@@ -54,4 +56,23 @@ export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
   }
 
   return sortItems(result);
+}
+
+export async function getPluginManifests() : Promise<PluginManifest[]> {
+  const pluginDir = path.join(__dirname, '../../plugins');
+  const pluginFolders = await fs.readdir(pluginDir);
+
+  const manifests: PluginManifest[] = [];
+
+  for (const folder of pluginFolders) {
+    const manifestPath = path.join(pluginDir, folder, 'manifest.json');
+    try {
+      const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+      manifests.push({ ...manifest, folder });
+    } catch (error) {
+      console.error(`Failed to read manifest for plugin ${folder}:`, error);
+    }
+  }
+
+  return manifests;
 }

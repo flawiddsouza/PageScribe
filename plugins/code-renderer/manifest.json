@@ -9,6 +9,7 @@
       "meta": {
         "type": "file",
         "renderer": "index.js",
+        "fontHint": "code",
         "supportedExtensions": [
           ".ts",
           ".css",

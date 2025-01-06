@@ -19,15 +19,16 @@ export interface ReadFileResult {
 
 export interface PluginManifest {
   folder: string;
-  manifestVersion: number;
+  manifestVersion: 1;
   name: string;
   version: string;
   description: string;
   contributes: {
-    type: string;
+    type: 'renderer';
     meta: {
-      type: string;
+      type: 'file' | 'folder';
       renderer: string;
+      fontHint: 'text' | 'code';
       supportedExtensions: string[];
     };
   }[];

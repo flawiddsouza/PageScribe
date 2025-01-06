@@ -1,5 +1,5 @@
 import { ipcMain, dialog } from 'electron';
-import { getDirectoryTree } from './utils';
+import { getDirectoryTree, getPluginManifests } from './utils';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -55,19 +55,6 @@ ipcMain.handle('rename-folder', async (event, basePath: string, oldFolderPath: s
 });
 
 ipcMain.handle('get-plugin-manifests', async () => {
-  const pluginDir = path.join(__dirname, '../../plugins');
-  const pluginFolders = await fs.readdir(pluginDir);
-  const manifests = [];
-
-  for (const folder of pluginFolders) {
-    const manifestPath = path.join(pluginDir, folder, 'manifest.json');
-    try {
-      const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
-      manifests.push({ ...manifest, folder });
-    } catch (error) {
-      console.error(`Failed to read manifest for plugin ${folder}:`, error);
-    }
-  }
-
+  const manifests = await getPluginManifests();
   return manifests;
 });

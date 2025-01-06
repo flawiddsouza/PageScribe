@@ -9,6 +9,7 @@
       "meta": {
         "type": "file",
         "renderer": "index.js",
+        "fontHint": "text",
         "supportedExtensions": [
           ".txt"
         ]
