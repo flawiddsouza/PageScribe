@@ -25,7 +25,7 @@ export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
       const id = parts.slice(0, i + 1).join('/');
       const existing = currentDir.find((item) => item.id === id);
       if (existing) {
-        currentDir = existing.children;
+        currentDir = existing.children ?? [];
       } else {
         const type = i === parts.length - 1 ? 'file' : 'folder';
         const item: DirectoryItem = {

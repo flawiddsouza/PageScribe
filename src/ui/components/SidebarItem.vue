@@ -19,8 +19,8 @@
       type="text"
       :value="showInput.initialValue"
       placeholder="Enter name"
-      @keyup.enter="(event) => showInput.callback(true, (event.target as HTMLInputElement).value)"
-      @keyup.escape="() => showInput.callback(false, '')"
+      @keyup.enter="(event) => showInput?.callback(true, (event.target as HTMLInputElement).value)"
+      @keyup.escape="() => showInput?.callback(false, '')"
       @blur="(event) => showInput && showInput.callback(true, (event.target as HTMLInputElement).value)"
     >
   </div>

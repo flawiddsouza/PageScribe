@@ -62,7 +62,7 @@ import ContextMenu from '@imengyu/vue3-context-menu';
 import smalltalk from 'smalltalk';
 
 import type { DirectoryItem, ShowInput } from './types';
-import { PluginManifest } from 'src/shared/types';
+import { PluginManifest } from '../../../src/shared/types';
 
 const sidebarRef = useTemplateRef('sidebar');
 const rendererRef = useTemplateRef('renderer');
@@ -72,7 +72,7 @@ const showSidebarItemInput = ref<ShowInput | null>(null);
 let rendererInstance: {
   render: (content: string) => void;
   getFileContent: () => string;
-} = null;
+};
 let pluginManifests: PluginManifest[] = [];
 
 onBeforeMount(async () => {
@@ -131,9 +131,18 @@ function getPluginRenderer(type: 'renderer', metaType: 'file' | 'folder', extens
 async function loadFile(filePath: string) {
   try {
     const basePath = localStorage.getItem('lastOpenedFolder');
+
+    if (!basePath) {
+      throw new Error('basePath is null when it\'s not supposed to be - should not happen');
+    }
+
     const readFileResult = await ipc.readFile(basePath, filePath);
 
     let pluginRenderer = getPluginRenderer('renderer', 'file', readFileResult.extension);
+
+    if (!rendererRef.value) {
+      throw new Error('rendererRef not available - should not happen');
+    }
 
     if (pluginRenderer) {
       rendererRef.value.innerHTML = '';
@@ -166,16 +175,32 @@ async function loadFile(filePath: string) {
       rendererRef.value.innerHTML = 'No renderer found for this file type.';
     }
   } catch (error) {
-    rendererRef.value.innerHTML = 'Error loading file: ' + error.message;
+    const err = error as Error;
+
+    if (!rendererRef.value) {
+      throw new Error('rendererRef not available - should not happen');
+    }
+
+    rendererRef.value.innerHTML = 'Error loading file: ' + err.message;
   }
 }
 
 async function saveCurrentlyOpenFile() {
+  if (!clickedItem.value) {
+    throw new Error('clickedItem.value is null when it\'s not supposed to be - should not happen');
+  }
+
   try {
     const basePath = localStorage.getItem('lastOpenedFolder');
+
+    if (!basePath) {
+      throw new Error('basePath is null when it\'s not supposed to be - should not happen');
+    }
+
     await ipc.writeFile(basePath, clickedItem.value.id, rendererInstance.getFileContent());
   } catch (error) {
-    alert('Error saving file: ' + error.message);
+    const err = error as Error;
+    alert('Error saving file: ' + err.message);
   }
 }
 
@@ -185,6 +210,10 @@ function handleClick(item: DirectoryItem) {
     loadFile(item.id);
   } else {
     nextTick(() => {
+      if (!rendererRef.value) {
+        throw new Error('rendererRef not available - should not happen');
+      }
+
       rendererRef.value.innerHTML = 'Directory selected. Click on a file to view its content.';
     });
   }
@@ -192,6 +221,10 @@ function handleClick(item: DirectoryItem) {
 
 function createContextMenuItems(item: DirectoryItem) {
   const basePath = localStorage.getItem('lastOpenedFolder');
+
+  if (!basePath) {
+    throw new Error('basePath is null when it\'s not supposed to be - should not happen');
+  }
 
   const handleCallback = async (success: boolean, value: string, type: 'file' | 'folder') => {
     if (success && value) {
@@ -282,12 +315,16 @@ function handleRightClick(item: DirectoryItem, event: MouseEvent) {
     y: event.clientY,
     items: contextMenuItems,
     preserveIconWidth: false,
-    onClose: () => sidebarRef.value.clearRightClickedItem(),
+    onClose: () => sidebarRef.value?.clearRightClickedItem(),
   });
 }
 
 function handleSidebarRightClick(event: MouseEvent) {
   const basePath = localStorage.getItem('lastOpenedFolder');
+
+  if (!basePath) {
+    throw new Error('basePath is null when it\'s not supposed to be - should not happen');
+  }
 
   const handleCallback = async (success: boolean, value: string, type: 'file' | 'folder') => {
     if (success && value) {

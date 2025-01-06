@@ -10,8 +10,8 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "typecheck": "tsc --noEmit && vue-tsc --noEmit",
-    "lint": "eslint . && vue-tsc --noEmit",
-    "lint-fix": "eslint --fix . && vue-tsc --noEmit"
+    "lint": "eslint . && npm run typecheck",
+    "lint-fix": "eslint --fix . && npm run typecheck"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.6.0",
