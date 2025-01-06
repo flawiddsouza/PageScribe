@@ -61,7 +61,8 @@ import * as ipc from '../ipc';
 import ContextMenu from '@imengyu/vue3-context-menu';
 import smalltalk from 'smalltalk';
 
-import type { DirectoryItem, PluginManifest, ShowInput } from './types';
+import type { DirectoryItem, ShowInput } from './types';
+import { PluginManifest } from 'src/shared/types';
 
 const sidebarRef = useTemplateRef('sidebar');
 const rendererRef = useTemplateRef('renderer');

@@ -1,5 +1,7 @@
 import { glob } from 'tinyglobby';
-import type { DirectoryItem, PluginManifest } from '../ui/components/types';
+import type { DirectoryItem } from '../ui/components/types';
+import { PluginManifestSchema } from '../shared/types';
+import type { PluginManifest } from '../shared/types';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -68,9 +70,14 @@ export async function getPluginManifests() : Promise<PluginManifest[]> {
     const manifestPath = path.join(pluginDir, folder, 'manifest.json');
     try {
       const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
-      manifests.push({ ...manifest, folder });
-    } catch (error) {
-      console.error(`Failed to read manifest for plugin ${folder}:`, error);
+      try {
+        const result = PluginManifestSchema.parse(manifest);
+        manifests.push({ ...result, folder });
+      } catch (validationError) {
+        console.error(`Validation failed for plugin ${folder}:`, validationError);
+      }
+    } catch (readError) {
+      console.error(`Failed to read manifest for plugin ${folder}:`, readError);
     }
   }
 

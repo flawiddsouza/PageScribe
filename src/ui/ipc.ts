@@ -1,4 +1,5 @@
-import type { DirectoryItem, PluginManifest, ReadFileResult } from './components/types';
+import type { DirectoryItem, ReadFileResult } from './components/types';
+import type { PluginManifest } from '../shared/types';
 
 export async function openFolder(): Promise<string | null> {
   const result = await window.electron.ipcRenderer.openFolder();

@@ -16,20 +16,3 @@ export interface ReadFileResult {
   extension: string;
   fileContent: string;
 }
-
-export interface PluginManifest {
-  folder: string;
-  manifestVersion: 1;
-  name: string;
-  version: string;
-  description: string;
-  contributes: {
-    type: 'renderer';
-    meta: {
-      type: 'file' | 'folder';
-      renderer: string;
-      fontHint: 'text' | 'code';
-      supportedExtensions: string[];
-    };
-  }[];
-}
