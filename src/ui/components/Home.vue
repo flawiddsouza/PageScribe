@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, useTemplateRef } from 'vue';
+import { nextTick, onBeforeMount, ref, useTemplateRef } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import Sidebar from './Sidebar.vue';
@@ -131,7 +131,9 @@ function handleClick(item: DirectoryItem) {
   if (item.type === 'file') {
     loadFile(item.id);
   } else {
-    rendererRef.value.innerHTML = 'Directory selected. Click on a file to view its content.';
+    nextTick(() => {
+      rendererRef.value.innerHTML = 'Directory selected. Click on a file to view its content.';
+    });
   }
 }
 
