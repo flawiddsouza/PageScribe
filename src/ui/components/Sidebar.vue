@@ -89,6 +89,22 @@ function clearRightClickedItem() {
   rightClickedItem.value = null;
 }
 
+function selectAllItems(items: DirectoryItem[]) {
+  const allItems = new Set<DirectoryItem>();
+  function addItems(itemList: DirectoryItem[]) {
+    for (const item of itemList) {
+      const itemClone = structuredClone(toRaw(item));
+      delete itemClone.children;
+      allItems.add(itemClone);
+      if (item.children) {
+        addItems(item.children);
+      }
+    }
+  }
+  addItems(items);
+  return allItems;
+}
+
 defineExpose({
   clearRightClickedItem,
 });
@@ -97,7 +113,7 @@ defineExpose({
 window.addEventListener('keydown', (event) => {
   if (sidebarRef.value && sidebarRef.value.contains(document.activeElement) && event.ctrlKey && event.key === 'a') {
     event.preventDefault();
-    selectedItems.value = new Set(props.items);
+    selectedItems.value = selectAllItems(props.items);
   }
 });
 </script>
