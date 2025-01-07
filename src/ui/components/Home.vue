@@ -1,12 +1,9 @@
 <template>
   <main style="display: grid; grid-template-rows: 1fr; height: 100dvh;">
-    <splitpanes
-      class="default-theme"
-      style="overflow: auto;"
-    >
-      <pane
-        min-size="15"
-        size="15"
+    <SplitPanes horizontal>
+      <Pane
+        :flex-grow="0.13"
+        min-size="200px"
         style="display: grid; grid-template-rows: auto 1fr;"
       >
         <button
@@ -30,10 +27,10 @@
           @item-right-clicked="handleRightClick"
           @contextmenu.prevent="handleSidebarRightClick"
         />
-      </pane>
-      <pane
-        min-size="15"
-        size="85"
+      </Pane>
+      <Pane
+        :flex-grow="1"
+        :hide-resizer="true"
       >
         <div
           v-if="activeTab"
@@ -51,17 +48,21 @@
             :plugin-manifests="pluginManifests"
           />
         </div>
-        <div style="padding: 1rem;" v-else>
+        <div
+          v-else
+          style="padding: 1rem;"
+        >
           Click on a file to view its content.
         </div>
-      </pane>
-    </splitpanes>
+      </Pane>
+    </SplitPanes>
   </main>
 </template>
 
 <script setup lang="ts">
 import { onBeforeMount, ref, useTemplateRef } from 'vue';
-import { Splitpanes, Pane } from 'splitpanes';
+import SplitPanes from './SplitPanes.vue';
+import Pane from './Pane.vue';
 import Sidebar from './Sidebar.vue';
 import Tab from './Tab.vue';
 import TabBar from './TabBar.vue';
