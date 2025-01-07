@@ -1,13 +1,23 @@
 /* splitpanes */
 
-.splitpanes__pane {
-  background-color: white !important;
+.splitpanes.default-theme .splitpanes__pane {
+  background-color: white;
 }
 
-.splitpanes__splitter {
-  background-color: #f1f1f1 !important;
+.splitpanes.default-theme .splitpanes__splitter {
+  background-color: #f1f1f1;
 }
 
-.splitpanes__splitter:hover {
-  background-color: #e9967a !important;
+.splitpanes.default-theme .splitpanes__splitter:hover {
+  animation: applyTransition 0.5s steps(1);
+  background-color: #e9967a;
+}
+
+@keyframes applyTransition {
+  0% {
+    background-color: #f1f1f1;
+  }
+  100% {
+    background-color: #e9967a;
+  }
 }
