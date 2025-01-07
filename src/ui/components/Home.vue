@@ -40,9 +40,9 @@
           style="height: 100%; display: grid; grid-template-rows: auto 1fr;"
         >
           <div>{{ clickedItem.id }}</div>
-          <div
-            ref="renderer"
-            style="height: 100%; overflow: hidden;"
+          <Tab
+            :tab="clickedItem"
+            :plugin-manifests="pluginManifests"
           />
         </div>
         <div v-else>
@@ -54,9 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeMount, ref, useTemplateRef } from 'vue';
+import { onBeforeMount, ref, useTemplateRef } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
 import Sidebar from './Sidebar.vue';
+import Tab from './Tab.vue';
 import * as ipc from '../ipc';
 import ContextMenu from '@imengyu/vue3-context-menu';
 import smalltalk from 'smalltalk';
@@ -65,14 +66,9 @@ import type { DirectoryItem, ShowInput } from './types';
 import { PluginManifest } from '../../../src/shared/types';
 
 const sidebarRef = useTemplateRef('sidebar');
-const rendererRef = useTemplateRef('renderer');
 const items = ref<DirectoryItem[]>([]);
 const clickedItem = ref<DirectoryItem|null>(null);
 const showSidebarItemInput = ref<ShowInput | null>(null);
-let rendererInstance: {
-  render: (content: string) => void;
-  getFileContent: () => string;
-};
 let pluginManifests: PluginManifest[] = [];
 
 onBeforeMount(async () => {
@@ -82,15 +78,6 @@ onBeforeMount(async () => {
   }
 
   pluginManifests = await ipc.getPluginManifests();
-
-  window.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.key === 's') {
-      event.preventDefault();
-      if (clickedItem.value) {
-        saveCurrentlyOpenFile();
-      }
-    }
-  });
 });
 
 function resetView() {
@@ -113,110 +100,8 @@ async function getDirectoryTree(filePath: string) {
   items.value = directoryStructure;
 }
 
-function getPluginRenderer(type: 'renderer', metaType: 'file' | 'folder', extension: string) {
-  for (const manifest of pluginManifests) {
-    for (const contribution of manifest.contributes) {
-      if (contribution.type === type && contribution.meta.type === metaType && contribution.meta.supportedExtensions.includes(extension)) {
-        return {
-          folder: manifest.folder,
-          ...contribution.meta,
-        };
-      }
-    }
-  }
-
-  return null;
-}
-
-async function loadFile(filePath: string) {
-  try {
-    const basePath = localStorage.getItem('lastOpenedFolder');
-
-    if (!basePath) {
-      throw new Error('basePath is null when it\'s not supposed to be - should not happen');
-    }
-
-    const readFileResult = await ipc.readFile(basePath, filePath);
-
-    let pluginRenderer = getPluginRenderer('renderer', 'file', readFileResult.extension);
-
-    if (!rendererRef.value) {
-      throw new Error('rendererRef not available - should not happen');
-    }
-
-    if (pluginRenderer) {
-      rendererRef.value.innerHTML = '';
-      const mountPoint = document.createElement('div');
-      mountPoint.style.height = '100%';
-      rendererRef.value.appendChild(mountPoint);
-      const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${pluginRenderer.folder}/${pluginRenderer.renderer}`);
-
-      let fontFamily = '';
-      let fontSize = '';
-
-      if (pluginRenderer.fontHint === 'code') {
-        fontFamily = 'Consolas, "Courier New", monospace';
-        fontSize = '14px';
-      }
-
-      if (pluginRenderer.fontHint === 'text') {
-        fontFamily = 'Arial, sans-serif';
-        fontSize = '16px';
-      }
-
-      rendererInstance = new Renderer({
-        mountPoint,
-        onUpdateCallback: () => saveCurrentlyOpenFile(),
-        fontFamily,
-        fontSize,
-      });
-      rendererInstance.render(readFileResult.fileContent);
-    } else {
-      rendererRef.value.innerHTML = 'No renderer found for this file type.';
-    }
-  } catch (error) {
-    const err = error as Error;
-
-    if (!rendererRef.value) {
-      throw new Error('rendererRef not available - should not happen');
-    }
-
-    rendererRef.value.innerHTML = 'Error loading file: ' + err.message;
-  }
-}
-
-async function saveCurrentlyOpenFile() {
-  if (!clickedItem.value) {
-    throw new Error('clickedItem.value is null when it\'s not supposed to be - should not happen');
-  }
-
-  try {
-    const basePath = localStorage.getItem('lastOpenedFolder');
-
-    if (!basePath) {
-      throw new Error('basePath is null when it\'s not supposed to be - should not happen');
-    }
-
-    await ipc.writeFile(basePath, clickedItem.value.id, rendererInstance.getFileContent());
-  } catch (error) {
-    const err = error as Error;
-    alert('Error saving file: ' + err.message);
-  }
-}
-
 function handleClick(item: DirectoryItem) {
   clickedItem.value = item;
-  if (item.type === 'file') {
-    loadFile(item.id);
-  } else {
-    nextTick(() => {
-      if (!rendererRef.value) {
-        throw new Error('rendererRef not available - should not happen');
-      }
-
-      rendererRef.value.innerHTML = 'Directory selected. Click on a file to view its content.';
-    });
-  }
 }
 
 function createContextMenuItems(item: DirectoryItem) {
