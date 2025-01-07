@@ -44,6 +44,7 @@
             :active-tab="activeTab"
             @tab-clicked="handleClick"
             @close-tab="closeTab"
+            @reorder-tabs="handleReorderTabs"
           />
           <Tab
             :tab="activeTab"
@@ -295,5 +296,10 @@ function closeTab(item: DirectoryItem) {
   if (activeTab.value?.id === item.id) {
     activeTab.value = tabs.value[index] ?? tabs.value[index - 1] ?? null;
   }
+}
+
+function handleReorderTabs({ from, to }: { from: number; to: number }) {
+  const movedTab = tabs.value.splice(from, 1)[0];
+  tabs.value.splice(to, 0, movedTab);
 }
 </script>

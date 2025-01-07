@@ -1,16 +1,23 @@
 <template>
   <div class="tabs">
     <div
-      v-for="tab in tabs"
+      v-for="(tab, index) in tabs"
       :key="tab.id"
       class="tab"
       :class="{ active: tab === activeTab }"
-      @click="emit('tab-clicked', tab)"
+      draggable="true"
+      @mousedown="emit('tab-clicked', tab)"
       @mousedown.middle.prevent="emit('close-tab', tab)"
+      @dragstart="onDragStart($event, index)"
+      @dragover.prevent
+      @drop="onDrop($event, index)"
     >
       <div>{{ tab.name }}</div>
-      <div class="close-btn" @click.stop="emit('close-tab', tab)">
-        <i class="codicon codicon-close"></i>
+      <div
+        class="close-btn"
+        @click.stop="emit('close-tab', tab)"
+      >
+        <i class="codicon codicon-close" />
       </div>
     </div>
   </div>
@@ -24,7 +31,20 @@ defineProps<{
   activeTab: DirectoryItem | null;
 }>();
 
-const emit = defineEmits(['tab-clicked', 'close-tab']);
+const emit = defineEmits(['tab-clicked', 'close-tab', 'reorder-tabs']);
+
+let draggedTabIndex: number | null = null;
+
+function onDragStart(event: DragEvent, index: number) {
+  draggedTabIndex = index;
+}
+
+function onDrop(event: DragEvent, index: number) {
+  if (draggedTabIndex !== null && draggedTabIndex !== index) {
+    emit('reorder-tabs', { from: draggedTabIndex, to: index });
+  }
+  draggedTabIndex = null;
+}
 </script>
 
 <style scoped>
