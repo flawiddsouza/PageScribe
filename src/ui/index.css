@@ -16,7 +16,7 @@ button {
   color: white;
   cursor: pointer;
   font: inherit;
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   transition: background-color 0.3s ease;
 }
 

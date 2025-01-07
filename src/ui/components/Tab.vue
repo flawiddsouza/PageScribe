@@ -1,7 +1,4 @@
 <template>
-  <template v-if="tab.type === 'folder'">
-    Directory selected. Click on a file to view its content.
-  </template>
   <div
     ref="renderer"
     style="height: 100%; overflow: hidden;"
@@ -142,7 +139,7 @@ function renderTab() {
         throw new Error('rendererRef not available - should not happen');
       }
 
-      rendererRef.value.innerHTML = 'Directory selected. Click on a file to view its content.';
+      rendererRef.value.innerHTML = '<div style="padding: 1rem;">Directory selected. Click on a file to view its content.</div>';
     });
   }
 

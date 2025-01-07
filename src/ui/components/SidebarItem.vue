@@ -54,7 +54,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['item-clicked', 'item-right-clicked']);
 
-const leftMargin = 20;
+const leftMargin = 14;
 
 const isOpen = ref(true);
 

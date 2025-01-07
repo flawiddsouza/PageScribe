@@ -36,17 +36,22 @@
         size="85"
       >
         <div
-          v-if="clickedItem"
+          v-if="activeTab"
           style="height: 100%; display: grid; grid-template-rows: auto 1fr;"
         >
-          <div>{{ clickedItem.id }}</div>
+          <TabBar
+            :tabs="tabs"
+            :active-tab="activeTab"
+            @tab-clicked="handleClick"
+            @close-tab="closeTab"
+          />
           <Tab
-            :tab="clickedItem"
+            :tab="activeTab"
             :plugin-manifests="pluginManifests"
           />
         </div>
-        <div v-else>
-          <p>Click on a file to view its content.</p>
+        <div style="padding: 1rem;" v-else>
+          Click on a file to view its content.
         </div>
       </pane>
     </splitpanes>
@@ -58,6 +63,7 @@ import { onBeforeMount, ref, useTemplateRef } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
 import Sidebar from './Sidebar.vue';
 import Tab from './Tab.vue';
+import TabBar from './TabBar.vue';
 import * as ipc from '../ipc';
 import ContextMenu, { MenuItem } from '@imengyu/vue3-context-menu';
 import smalltalk from 'smalltalk';
@@ -67,9 +73,10 @@ import { PluginManifest } from '../../../src/shared/types';
 
 const sidebarRef = useTemplateRef('sidebar');
 const items = ref<DirectoryItem[]>([]);
-const clickedItem = ref<DirectoryItem|null>(null);
 const showSidebarItemInput = ref<ShowInput | null>(null);
 let pluginManifests: PluginManifest[] = [];
+const tabs = ref<DirectoryItem[]>([]);
+const activeTab = ref<DirectoryItem | null>(null);
 
 onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
@@ -81,8 +88,9 @@ onBeforeMount(async () => {
 });
 
 function resetView() {
-  clickedItem.value = null;
   items.value = [];
+  tabs.value = [];
+  activeTab.value = null;
 }
 
 async function openFolder() {
@@ -101,7 +109,10 @@ async function getDirectoryTree(filePath: string) {
 }
 
 function handleClick(item: DirectoryItem) {
-  clickedItem.value = item;
+  if (tabs.value.find((tab) => tab.id === item.id) === undefined) {
+    tabs.value.push(item);
+  }
+  activeTab.value = item;
 }
 
 function createContextMenuItems(item: DirectoryItem): MenuItem[] {
@@ -273,5 +284,16 @@ function handleSidebarRightClick(event: MouseEvent) {
     items: contextMenuItems,
     preserveIconWidth: false,
   });
+}
+
+function closeTab(item: DirectoryItem) {
+  const index = tabs.value.findIndex((tab) => tab.id === item.id);
+  if (index !== -1) {
+    tabs.value.splice(index, 1);
+  }
+
+  if (activeTab.value?.id === item.id) {
+    activeTab.value = tabs.value[index] ?? tabs.value[index - 1] ?? null;
+  }
 }
 </script>
