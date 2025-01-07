@@ -51,3 +51,7 @@ export async function getPluginManifests(): Promise<PluginManifest[]> {
   const manifests = await window.electron.ipcRenderer.getPluginManifests();
   return manifests;
 }
+
+export async function revealInFileExplorer(basePath: string, fileOrFolderPath: string): Promise<void> {
+  await window.electron.ipcRenderer.revealInFileExplorer(basePath, fileOrFolderPath);
+}

@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('electron', {
     renameFile: (basePath: string, oldFilePath: string, newFileName: string) => ipcRenderer.invoke('rename-file', basePath, oldFilePath, newFileName),
     renameFolder: (basePath: string, oldFolderPath: string, newFolderName: string) => ipcRenderer.invoke('rename-folder', basePath, oldFolderPath, newFolderName),
     getPluginManifests: () => ipcRenderer.invoke('get-plugin-manifests'),
+    revealInFileExplorer: (basePath: string, fileOrFolderPath: string) => ipcRenderer.invoke('reveal-in-file-explorer', basePath, fileOrFolderPath),
   }
 });

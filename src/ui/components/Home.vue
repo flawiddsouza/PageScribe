@@ -59,7 +59,7 @@ import { Splitpanes, Pane } from 'splitpanes';
 import Sidebar from './Sidebar.vue';
 import Tab from './Tab.vue';
 import * as ipc from '../ipc';
-import ContextMenu from '@imengyu/vue3-context-menu';
+import ContextMenu, { MenuItem } from '@imengyu/vue3-context-menu';
 import smalltalk from 'smalltalk';
 
 import type { DirectoryItem, ShowInput } from './types';
@@ -104,7 +104,7 @@ function handleClick(item: DirectoryItem) {
   clickedItem.value = item;
 }
 
-function createContextMenuItems(item: DirectoryItem) {
+function createContextMenuItems(item: DirectoryItem): MenuItem[] {
   const basePath = localStorage.getItem('lastOpenedFolder');
 
   if (!basePath) {
@@ -146,6 +146,10 @@ function createContextMenuItems(item: DirectoryItem) {
     }
   };
 
+  const handleReveal = async () => {
+    await ipc.revealInFileExplorer(basePath, item.id);
+  };
+
   if (item.type === 'folder') {
     return [
       {
@@ -171,6 +175,11 @@ function createContextMenuItems(item: DirectoryItem) {
         },
       },
       {
+        label: 'Reveal in File Explorer',
+        onClick: handleReveal,
+      },
+      { divided: 'self' },
+      {
         label: 'Rename',
         onClick: () => handleRename('folder'),
       },
@@ -181,6 +190,11 @@ function createContextMenuItems(item: DirectoryItem) {
     ];
   } else {
     return [
+      {
+        label: 'Reveal in File Explorer',
+        onClick: handleReveal,
+      },
+      { divided: 'self' },
       {
         label: 'Rename',
         onClick: () => handleRename('file'),
@@ -220,6 +234,10 @@ function handleSidebarRightClick(event: MouseEvent) {
     showSidebarItemInput.value = null;
   };
 
+  const handleReveal = async () => {
+    await ipc.revealInFileExplorer(basePath, '');
+  };
+
   const contextMenuItems = [
     {
       label: 'New File...',
@@ -242,6 +260,10 @@ function handleSidebarRightClick(event: MouseEvent) {
           callback: (success, value) => handleCallback(success, value, 'folder'),
         };
       },
+    },
+    {
+      label: 'Reveal in File Explorer',
+      onClick: handleReveal,
     },
   ];
 

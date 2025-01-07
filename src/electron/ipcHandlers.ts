@@ -1,4 +1,4 @@
-import { ipcMain, dialog } from 'electron';
+import { ipcMain, dialog, shell } from 'electron';
 import { getDirectoryTree, getPluginManifests } from './utils';
 import fs from 'fs/promises';
 import path from 'path';
@@ -57,4 +57,8 @@ ipcMain.handle('rename-folder', async (event, basePath: string, oldFolderPath: s
 ipcMain.handle('get-plugin-manifests', async () => {
   const manifests = await getPluginManifests();
   return manifests;
+});
+
+ipcMain.handle('reveal-in-file-explorer', async (event, basePath: string, fileOrFolderPath: string) => {
+  shell.showItemInFolder(path.join(basePath, fileOrFolderPath));
 });
