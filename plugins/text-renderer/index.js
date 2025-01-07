@@ -3,17 +3,17 @@ export default class {
   #onUpdateCallback;
   #fontFamily;
   #fontSize;
-  #text;
+  #fileContent;
 
   constructor(options) {
     this.#mountPoint = options.mountPoint;
     this.#onUpdateCallback = options.onUpdateCallback;
     this.#fontFamily = options.fontFamily;
     this.#fontSize = options.fontSize;
+    this.#fileContent = options.fileContent;
   }
 
-  render(existingFileContent) {
-    this.#text = existingFileContent;
+  render() {
     const textarea = document.createElement('textarea');
     textarea.style.width = '100%';
     textarea.style.height = '100%';
@@ -24,9 +24,9 @@ export default class {
     textarea.style.fontFamily = this.#fontFamily;
     textarea.style.fontSize = this.#fontSize;
     textarea.spellcheck = false;
-    textarea.value = this.#text;
+    textarea.value = this.#fileContent;
     textarea.addEventListener('input', (e) => {
-      this.#text = e.target.value;
+      this.#fileContent = e.target.value;
       this.#onUpdateCallback();
     });
     this.#mountPoint.appendChild(textarea);
@@ -34,6 +34,6 @@ export default class {
   }
 
   getFileContent() {
-    return this.#text;
+    return this.#fileContent;
   }
 }

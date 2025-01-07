@@ -11,6 +11,7 @@
         "renderer": "index.js",
         "fontHint": "code",
         "supportedExtensions": [
+          ".js",
           ".ts",
           ".css",
           ".vue"

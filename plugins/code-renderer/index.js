@@ -5,20 +5,40 @@ export default class {
   #onUpdateCallback;
   #fontFamily;
   #fontSize;
-  #text;
+  #fileExtension;
+  #fileContent;
 
   constructor(options) {
     this.#mountPoint = options.mountPoint;
     this.#onUpdateCallback = options.onUpdateCallback;
     this.#fontFamily = options.fontFamily;
     this.#fontSize = options.fontSize;
+    this.#fileExtension = options.fileExtension;
+    this.#fileContent = options.fileContent;
   }
 
-  render(existingFileContent) {
-    this.#text = existingFileContent;
+  render() {
+    let language = 'plaintext';
+
+    if (this.#fileExtension === '.js') {
+      language = 'javascript';
+    }
+
+    if (this.#fileExtension === '.ts') {
+      language = 'typescript';
+    }
+
+    if (this.#fileExtension === '.css') {
+      language = 'css';
+    }
+
+    if (this.#fileExtension === '.vue') {
+      language = 'vue';
+    }
 
     const editor = monaco.editor.create(this.#mountPoint, {
-      value: this.#text,
+      language,
+      value: this.#fileContent,
       theme: 'vs-light',
       fontFamily: this.#fontFamily,
       fontSize: this.#fontSize,
@@ -30,7 +50,7 @@ export default class {
     });
 
     editor.getModel().onDidChangeContent(() => {
-      this.#text = editor.getValue();
+      this.#fileContent = editor.getValue();
       this.#onUpdateCallback();
     });
 
@@ -38,6 +58,6 @@ export default class {
   }
 
   getFileContent() {
-    return this.#text;
+    return this.#fileContent;
   }
 }

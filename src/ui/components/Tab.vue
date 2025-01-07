@@ -22,7 +22,7 @@ const props = defineProps<{
 const rendererRef = useTemplateRef('renderer');
 
 let rendererInstance: {
-  render: (content: string) => void;
+  render: () => void;
   getFileContent: () => string;
 };
 
@@ -81,8 +81,10 @@ async function renderFile() {
       onUpdateCallback: () => saveCurrentlyOpenFile(),
       fontFamily,
       fontSize,
+      fileExtension: readFileResult.extension,
+      fileContent: readFileResult.fileContent,
     });
-    rendererInstance.render(readFileResult.fileContent);
+    rendererInstance.render();
   } else {
     rendererRef.value.innerHTML = 'No renderer found for this file type.';
   }
