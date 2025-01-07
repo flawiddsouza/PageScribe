@@ -14,7 +14,10 @@ export default [
   { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   {
-    ignores: ['.vite']
+    ignores: [
+      '.vite',
+      'plugins/scribe-renderer/dist',
+    ]
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,

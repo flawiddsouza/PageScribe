@@ -1,0 +1,20 @@
+{
+  "manifestVersion": 1,
+  "name": "Scribe Renderer",
+  "version": "1.0.0",
+  "description": "A plugin that renders scribe files",
+  "contributes": [
+    {
+      "type": "renderer",
+      "meta": {
+        "type": "file",
+        "renderer": "dist/index.js",
+        "stylesheet": "dist/index.css",
+        "fontHint": "text",
+        "supportedExtensions": [
+          ".scribe"
+        ]
+      }
+    }
+  ]
+}

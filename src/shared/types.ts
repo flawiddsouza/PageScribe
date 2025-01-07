@@ -10,6 +10,7 @@ export const PluginManifestSchema = z.object({
     meta: z.object({
       type: z.literal('file').or(z.literal('folder')),
       renderer: z.string(),
+      stylesheet: z.string().optional(),
       fontHint: z.literal('text').or(z.literal('code')),
       supportedExtensions: z.array(z.string()),
     }),

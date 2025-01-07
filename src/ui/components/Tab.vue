@@ -58,9 +58,26 @@ async function renderFile() {
 
   if (pluginRenderer) {
     rendererRef.value.innerHTML = '';
+
+    // load stylesheet from plugin
     const mountPoint = document.createElement('div');
     mountPoint.style.height = '100%';
     rendererRef.value.appendChild(mountPoint);
+
+    if (pluginRenderer.stylesheet) {
+      const existingStylesheet = document.getElementById('plugin-stylesheet');
+
+      if (existingStylesheet) {
+        existingStylesheet.remove();
+      }
+
+      const stylesheet = document.createElement('link');
+      stylesheet.id = 'plugin-stylesheet';
+      stylesheet.rel = 'stylesheet';
+      stylesheet.href = `../../../plugins/${pluginRenderer.folder}/${pluginRenderer.stylesheet}`;
+      document.head.appendChild(stylesheet);
+    }
+
     const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${pluginRenderer.folder}/${pluginRenderer.renderer}`);
 
     let fontFamily = '';
