@@ -124,7 +124,7 @@ async function saveCurrentlyOpenFile() {
 }
 
 function handleKeyDown(event: KeyboardEvent) {
-  if (event.ctrlKey && event.key === 's') {
+  if (event.ctrlKey && event.key.toLowerCase() === 's') {
     event.preventDefault();
     if (props.tab) {
       saveCurrentlyOpenFile();

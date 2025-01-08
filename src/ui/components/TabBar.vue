@@ -24,9 +24,10 @@
 </template>
 
 <script setup lang="ts">
+import { onUnmounted } from 'vue';
 import { DirectoryItem } from './types';
 
-defineProps<{
+const props = defineProps<{
   tabs: DirectoryItem[];
   activeTab: DirectoryItem | null;
 }>();
@@ -45,6 +46,21 @@ function onDrop(event: DragEvent, index: number) {
   }
   draggedTabIndex = null;
 }
+
+function onKeyDown(event: KeyboardEvent) {
+  if (event.ctrlKey && event.key.toLowerCase() === 'w') {
+    if (props.activeTab) {
+      event.preventDefault();
+      emit('close-tab', props.activeTab);
+    }
+  }
+}
+
+window.addEventListener('keydown', onKeyDown);
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKeyDown);
+});
 </script>
 
 <style scoped>

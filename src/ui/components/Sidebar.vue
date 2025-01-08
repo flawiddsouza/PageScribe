@@ -111,7 +111,7 @@ defineExpose({
 
 // if focus is within sidebar and I press ctrl + a, select all items
 window.addEventListener('keydown', (event) => {
-  if (sidebarRef.value && sidebarRef.value.contains(document.activeElement) && event.ctrlKey && event.key === 'a') {
+  if (sidebarRef.value && sidebarRef.value.contains(document.activeElement) && event.ctrlKey && event.key.toLowerCase() === 'a') {
     event.preventDefault();
     selectedItems.value = selectAllItems(props.items);
   }
