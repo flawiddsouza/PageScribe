@@ -100,7 +100,7 @@ async function renderFile() {
     });
     rendererInstance.render();
   } else {
-    rendererRef.value.innerHTML = 'No renderer found for this file type.';
+    rendererRef.value.innerHTML = '<div style="padding: 1rem;">No renderer found for this file type.</div>';
   }
 }
 
