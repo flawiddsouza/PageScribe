@@ -47,12 +47,28 @@ function onDrop(event: DragEvent, index: number) {
   draggedTabIndex = null;
 }
 
+function cycleTabs(forward: boolean) {
+  if (!props.activeTab) return;
+  const currentIndex = props.tabs.findIndex(tab => tab === props.activeTab);
+  let newIndex;
+  if (forward) {
+    newIndex = (currentIndex + 1) % props.tabs.length;
+  } else {
+    newIndex = (currentIndex - 1 + props.tabs.length) % props.tabs.length;
+  }
+  emit('tab-clicked', props.tabs[newIndex]);
+}
+
 function onKeyDown(event: KeyboardEvent) {
   if (event.ctrlKey && event.key.toLowerCase() === 'w') {
     if (props.activeTab) {
       event.preventDefault();
       emit('close-tab', props.activeTab);
     }
+  }
+  if (event.ctrlKey && event.key === 'Tab') {
+    event.preventDefault();
+    cycleTabs(!event.shiftKey);
   }
 }
 
