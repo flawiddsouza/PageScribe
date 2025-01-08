@@ -5,13 +5,14 @@
     :style="{ paddingLeft: `${leftMargin + (level * 20)}px` }"
     @click="handleClick"
     @contextmenu.stop="handleRightClick"
+    v-if="item.id !== ''"
   >
     <i :class="['codicon', item.type === 'folder' ? (isOpen ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
   </div>
   <div
-    v-if="showInput && item.id === showInput.parentId"
+    v-if="showInput && (item.id === showInput.parentId || item.id === '')"
     class="folder-item"
-    :style="{ paddingLeft: `${leftMargin + ((level + 1) * 20)}px` }"
+    :style="{ paddingLeft: `${leftMargin + ((level + (item.id !== '' ? 1 : 0)) * 20)}px` }"
   >
     <i :class="['codicon', showInput.type === 'folder' ? 'codicon-chevron-right' : 'codicon-file', 'icon']" />
     <input

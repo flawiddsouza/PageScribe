@@ -23,8 +23,8 @@
             activeBorderColor: '#b6d5fb',
           }"
           :show-input="showSidebarItemInput"
-          @item-clicked="handleClick"
-          @item-right-clicked="handleRightClick"
+          @item-clicked="handleSidebarItemClick"
+          @item-right-clicked="handleSidebarItemRightClick"
           @contextmenu.prevent="handleSidebarRightClick"
         />
       </Pane>
@@ -39,7 +39,7 @@
           <TabBar
             :tabs="tabs"
             :active-tab="activeTab"
-            @tab-clicked="handleClick"
+            @tab-clicked="handleSidebarItemClick"
             @close-tab="closeTab"
             @reorder-tabs="handleReorderTabs"
           />
@@ -110,7 +110,7 @@ async function getDirectoryTree(filePath: string) {
   items.value = directoryStructure;
 }
 
-function handleClick(item: DirectoryItem) {
+function handleSidebarItemClick(item: DirectoryItem) {
   if (tabs.value.find((tab) => tab.id === item.id) === undefined) {
     tabs.value.push(item);
   }
@@ -220,7 +220,7 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
   }
 }
 
-function handleRightClick(item: DirectoryItem, event: MouseEvent) {
+function handleSidebarItemRightClick(item: DirectoryItem, event: MouseEvent) {
   const contextMenuItems = createContextMenuItems(item);
   ContextMenu.showContextMenu({
     x: event.clientX,
@@ -245,6 +245,11 @@ function handleSidebarRightClick(event: MouseEvent) {
       getDirectoryTree(basePath);
     }
     showSidebarItemInput.value = null;
+
+    const emptyItemIndex = items.value.findIndex((item) => item.id === '');
+    if (emptyItemIndex !== -1) {
+      items.value.splice(emptyItemIndex, 1);
+    }
   };
 
   const handleReveal = async () => {
@@ -261,6 +266,14 @@ function handleSidebarRightClick(event: MouseEvent) {
           initialValue: '',
           callback: (success, value) => handleCallback(success, value, 'file'),
         };
+
+        const lastFolderIndex = items.value.findLastIndex((item) => item.type === 'folder');
+
+        items.value.splice(lastFolderIndex + 1, 0, {
+          id: '',
+          name: '',
+          type: 'file'
+        });
       },
     },
     {
@@ -272,6 +285,12 @@ function handleSidebarRightClick(event: MouseEvent) {
           initialValue: '',
           callback: (success, value) => handleCallback(success, value, 'folder'),
         };
+
+        items.value.splice(0, 0, {
+          id: '',
+          name: '',
+          type: 'folder'
+        });
       },
     },
     {
