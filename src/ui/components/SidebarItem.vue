@@ -2,10 +2,16 @@
   <div
     v-if="item.id !== ''"
     tabindex="0"
-    :class="['folder-item', { active: isActive, 'right-clicked': isRightClicked }]"
+    :class="['folder-item', { active: isActive, 'right-clicked': isRightClicked, 'drop-target': isDragOver }]"
     :style="{ paddingLeft: `${leftMargin + (level * 20)}px` }"
+    draggable="true"
     @click="handleClick"
     @contextmenu.stop="handleRightClick"
+    @dragstart="onDragStart"
+    @dragover.prevent
+    @drop.prevent="onDrop"
+    @dragenter="onDragEnter"
+    @dragleave="onDragLeave"
   >
     <i :class="['codicon', item.type === 'folder' ? (isOpen ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
   </div>
@@ -36,6 +42,8 @@
       :show-input="showInput"
       @item-clicked="handleChildClick"
       @item-right-clicked="handleChildRightClick"
+      @drag-start="onDragStartNested"
+      @drop="onDropNested"
     />
   </div>
 </template>
@@ -53,7 +61,7 @@ const props = defineProps<{
   showInput: ShowInput | null,
 }>();
 
-const emit = defineEmits(['item-clicked', 'item-right-clicked']);
+const emit = defineEmits(['item-clicked', 'item-right-clicked', 'drag-start', 'drop']);
 
 const leftMargin = 14;
 
@@ -66,6 +74,8 @@ const isActive = computed(() => {
 const isRightClicked = computed(() => {
   return props.rightClickedItem?.id === props.item.id;
 });
+
+const isDragOver = ref(false);
 
 // auto open folder when input is shown
 watch(() => props.showInput, (showInput) => {
@@ -96,6 +106,33 @@ function handleClick(event: MouseEvent) {
 function handleRightClick(event: MouseEvent) {
   event.preventDefault();
   emit('item-right-clicked', props.item, event);
+}
+
+function onDragStartNested(item: DirectoryItem) {
+  emit('drag-start', item);
+}
+
+function onDropNested(item: DirectoryItem) {
+  emit('drop', item);
+}
+
+function onDragStart() {
+  emit('drag-start', props.item);
+}
+
+function onDrop() {
+  isDragOver.value = false;
+  emit('drop', props.item);
+}
+
+function onDragEnter() {
+  if (props.item.type === 'folder') {
+    isDragOver.value = true;
+  }
+}
+
+function onDragLeave() {
+  isDragOver.value = false;
 }
 
 const vFocus = {
@@ -139,5 +176,9 @@ const vFocus = {
   width: 16px;
   height: 16px;
   margin-right: 5px;
+}
+
+.drop-target {
+  border: 1px dashed #007acc;
 }
 </style>

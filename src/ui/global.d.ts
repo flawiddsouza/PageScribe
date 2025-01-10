@@ -16,6 +16,8 @@ declare global {
         deleteFolder: (basePath: string, folderPath: string) => Promise<void>;
         renameFile: (basePath: string, oldFilePath: string, newFileName: string) => Promise<void>;
         renameFolder: (basePath: string, oldFolderPath: string, newFolderName: string) => Promise<void>;
+        moveFile: (basePath: string, oldFilePath: string, moveToFolderPath: string) => Promise<void>;
+        moveFolder: (basePath: string, oldFolderPath: string, moveToFolderPath: string) => Promise<void>;
         getPluginManifests: () => Promise<PluginManifest[]>;
         revealInFileExplorer: (basePath: string, fileOrFolderPath: string) => Promise<void>;
       };

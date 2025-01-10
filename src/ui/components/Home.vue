@@ -27,6 +27,8 @@
           @item-clicked="handleSidebarItemClick"
           @item-right-clicked="handleSidebarItemRightClick"
           @contextmenu.prevent="handleSidebarRightClick"
+          @drag-start="handleDragStart"
+          @drop="handleDrop"
         />
       </Pane>
       <Pane
@@ -80,6 +82,7 @@ const showSidebarItemInput = ref<ShowInput | null>(null);
 let pluginManifests: PluginManifest[] = [];
 const tabs = ref<DirectoryItem[]>([]);
 const activeTab = ref<DirectoryItem | null>(null);
+const draggedItem = ref<DirectoryItem | null>(null);
 
 onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
@@ -322,5 +325,28 @@ function closeTab(item: DirectoryItem) {
 function handleReorderTabs({ from, to }: { from: number; to: number }) {
   const movedTab = tabs.value.splice(from, 1)[0];
   tabs.value.splice(to, 0, movedTab);
+}
+
+function handleDragStart(item: DirectoryItem) {
+  draggedItem.value = item;
+}
+
+async function handleDrop(item: DirectoryItem) {
+  if (!draggedItem.value) return;
+
+  // disallow dropping a file / folder onto a file
+  if (item.type === 'file') return;
+
+  // disallow dropping a folder onto itself
+  if (draggedItem.value.id !== item.id) {
+    const basePath = localStorage.getItem('lastOpenedFolder');
+    if (!basePath) return;
+
+    const mover = draggedItem.value.type === 'file' ? ipc.moveFile : ipc.moveFolder;
+    await mover(basePath, draggedItem.value.id, item.type === 'folder' ? item.id : '');
+    getDirectoryTree(basePath);
+  }
+
+  draggedItem.value = null;
 }
 </script>

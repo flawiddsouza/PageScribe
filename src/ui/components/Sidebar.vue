@@ -23,6 +23,8 @@
       :show-input="showInput"
       @item-clicked="handleItemClick"
       @item-right-clicked="handleItemRightClick"
+      @drag-start="(item, ev) => $emit('drag-start', item, ev)"
+      @drop="(item, ev) => $emit('drop', item, ev)"
     />
   </div>
 </template>
@@ -49,7 +51,7 @@ const sidebarRef = useTemplateRef('sidebar');
 const selectedItems = ref<Set<DirectoryItem>>(new Set());
 const rightClickedItem = ref<DirectoryItem | null>(null);
 
-const emit = defineEmits(['item-clicked', 'item-right-clicked', 'sidebar-right-clicked']);
+const emit = defineEmits(['item-clicked', 'item-right-clicked', 'sidebar-right-clicked', 'drag-start', 'drop']);
 
 function handleItemClick(item: DirectoryItem, event: MouseEvent) {
   const itemClone = structuredClone(toRaw(item));

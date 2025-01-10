@@ -47,6 +47,14 @@ export async function renameFolder(basePath: string, oldFolderPath: string, newF
   await window.electron.ipcRenderer.renameFolder(basePath, oldFolderPath, newFolderName);
 }
 
+export async function moveFile(basePath: string, oldFilePath: string, moveToFolderPath: string): Promise<void> {
+  await window.electron.ipcRenderer.moveFile(basePath, oldFilePath, moveToFolderPath);
+}
+
+export async function moveFolder(basePath: string, oldFolderPath: string, moveToFolderPath: string): Promise<void> {
+  await window.electron.ipcRenderer.moveFolder(basePath, oldFolderPath, moveToFolderPath);
+}
+
 export async function getPluginManifests(): Promise<PluginManifest[]> {
   const manifests = await window.electron.ipcRenderer.getPluginManifests();
   return manifests;

@@ -54,6 +54,26 @@ ipcMain.handle('rename-folder', async (event, basePath: string, oldFolderPath: s
   await fs.rename(path.join(basePath, oldFolderPath), path.join(basePath, newFolderPath));
 });
 
+ipcMain.handle('move-file', async (event, basePath: string, oldFilePath: string, moveToFolderPath: string) => {
+  const currentPath = path.join(basePath, oldFilePath);
+  const targetPath = path.join(basePath, moveToFolderPath, path.basename(oldFilePath));
+  console.log('moveFile', {
+    currentPath,
+    targetPath
+  });
+  await fs.rename(currentPath, targetPath);
+});
+
+ipcMain.handle('move-folder', async (event, basePath: string, oldFolderPath: string, moveToFolderPath: string) => {
+  const currentPath = path.join(basePath, oldFolderPath);
+  const targetPath = path.join(basePath, moveToFolderPath, path.basename(oldFolderPath));
+  console.log('moveFolder', {
+    currentPath,
+    targetPath
+  });
+  await fs.rename(currentPath, targetPath);
+});
+
 ipcMain.handle('get-plugin-manifests', async () => {
   const manifests = await getPluginManifests();
   return manifests;
