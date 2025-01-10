@@ -5,9 +5,10 @@
     tabindex="0"
     :style="{
       '--font-size': fontSize,
-      '--hover-color': colors.hoverColor,
-      '--active-color': colors.activeColor,
-      '--active-border-color': colors.activeBorderColor
+      '--hover-color': colors.sidebarItemHoverColor,
+      '--active-color': colors.sidebarItemActiveColor,
+      '--active-border-color': colors.sidebarItemActiveBorderColor,
+      '--border-color': colors.borderColor,
     }"
     @click="deselectAllItems"
     @contextmenu.prevent="handleSidebarRightClick"
@@ -35,9 +36,10 @@ const props = defineProps<{
   items: DirectoryItem[],
   fontSize: string,
   colors: {
-    hoverColor: string,
-    activeColor: string,
-    activeBorderColor: string,
+    sidebarItemHoverColor: string,
+    sidebarItemActiveColor: string,
+    sidebarItemActiveBorderColor: string,
+    borderColor: string,
   },
   showInput: ShowInput | null,
 }>();
@@ -125,14 +127,15 @@ window.addEventListener('keydown', (event) => {
   user-select: none;
   padding-bottom: 2rem;
   border: 1px solid transparent;
-  border-left-width: 2px;
-  border-right-width: 2px;
+  border-left-width: 1px;
+  border-right-width: 1px;
   font-size: var(--font-size);
+  border-right: 1px solid var(--border-color);
 }
 
 .sidebar:focus {
   border: 1px solid #3e79ff;
-  border-left-width: 2px;
-  border-right-width: 2px;
+  border-left-width: 1px;
+  border-right-width: 1px;
 }
 </style>

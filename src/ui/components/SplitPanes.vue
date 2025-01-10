@@ -24,7 +24,7 @@ onMounted(() => {
   const container = splitPanesContainer.value;
   if (!container) return;
 
-  const resizers = Array.from(container.querySelectorAll('[data-resizer]'));
+  const resizers: HTMLElement[] = Array.from(container.querySelectorAll('[data-resizer]'));
 
   let activeResizer: HTMLElement | null = null;
   let leftPanelInitialRect: DOMRect | null = null;
@@ -44,8 +44,14 @@ onMounted(() => {
 
     e.preventDefault();
 
-    const leftPanel = activeResizer.previousElementSibling as HTMLElement & { __vueParentComponent: any };
-    const rightPanel = activeResizer.nextElementSibling as HTMLElement & { __vueParentComponent: any };
+    interface VueComponent {
+      props: {
+        flexGrow: number;
+      };
+    }
+
+    const leftPanel = activeResizer.previousElementSibling as HTMLElement & { __vueParentComponent: VueComponent };
+    const rightPanel = activeResizer.nextElementSibling as HTMLElement & { __vueParentComponent: VueComponent };
 
     if (!leftPanel || !rightPanel) return;
 

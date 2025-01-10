@@ -1,11 +1,11 @@
 <template>
   <div
+    v-if="item.id !== ''"
     tabindex="0"
     :class="['folder-item', { active: isActive, 'right-clicked': isRightClicked }]"
     :style="{ paddingLeft: `${leftMargin + (level * 20)}px` }"
     @click="handleClick"
     @contextmenu.stop="handleRightClick"
-    v-if="item.id !== ''"
   >
     <i :class="['codicon', item.type === 'folder' ? (isOpen ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
   </div>
@@ -111,7 +111,7 @@ const vFocus = {
   align-items: center;
   padding: 5px;
   width: 100%;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
 }
 
 .folder-item:hover:not(input) {

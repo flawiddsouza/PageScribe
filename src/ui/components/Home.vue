@@ -18,9 +18,10 @@
           :items="items"
           font-size="14px"
           :colors="{
-            hoverColor: '#f0f0f0',
-            activeColor: '#dfeaff',
-            activeBorderColor: '#b6d5fb',
+            sidebarItemHoverColor: '#f0f0f0',
+            sidebarItemActiveColor: '#dfeaff',
+            sidebarItemActiveBorderColor: '#b6d5fb',
+            borderColor: '#e5e5e5',
           }"
           :show-input="showSidebarItemInput"
           @item-clicked="handleSidebarItemClick"

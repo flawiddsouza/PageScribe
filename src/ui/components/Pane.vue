@@ -33,7 +33,7 @@ watch(() => props.flexGrow, (newVal) => {
 <style scoped>
 .resizer {
   width: 4px;
-  background-color: lightgrey;
+  background-color: transparent;
   cursor: ew-resize;
 }
 
