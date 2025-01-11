@@ -161,6 +161,9 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
     if (confirmed) {
       const deleteMethod = type === 'file' ? ipc.deleteFile : ipc.deleteFolder;
       await deleteMethod(basePath, item.id);
+      if (tabs.value.some((tab) => tab.id === item.id)) {
+        closeTab(item);
+      }
       getDirectoryTree(basePath);
     }
   };
