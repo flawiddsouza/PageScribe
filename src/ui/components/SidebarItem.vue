@@ -1,6 +1,7 @@
 <template>
   <div
     v-if="item.id !== ''"
+    ref="item"
     tabindex="0"
     :class="['folder-item', { active: isActive, 'right-clicked': isRightClicked, 'drop-target': isDragOver }]"
     :style="{ paddingLeft: `${leftMargin + (level * 20)}px` }"
@@ -50,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, useTemplateRef, computed, watch } from 'vue';
 import '@vscode/codicons/dist/codicon.css';
 import type { DirectoryItem, ShowInput } from './types';
 
@@ -68,6 +69,9 @@ const emit = defineEmits(['item-clicked', 'item-right-clicked', 'drag-start', 'd
 const leftMargin = 14;
 
 const isOpen = ref(true);
+const isDragOver = ref(false);
+
+const itemRef = useTemplateRef('item');
 
 const isActive = computed(() => {
   return Array.from(props.selectedItems).some(selectedItem => selectedItem.id === props.item.id) || props.activeItem?.id === props.item.id;
@@ -77,12 +81,17 @@ const isRightClicked = computed(() => {
   return props.rightClickedItem?.id === props.item.id;
 });
 
-const isDragOver = ref(false);
-
 // auto open folder when input is shown
 watch(() => props.showInput, (showInput) => {
   if (showInput && showInput.parentId === props.item.id) {
     isOpen.value = true;
+  }
+});
+
+// scroll to active item
+watch(() => props.activeItem, () => {
+  if (props.activeItem && props.activeItem.id === props.item.id) {
+    itemRef.value?.scrollIntoView({ block: 'nearest' });
   }
 });
 
