@@ -16,6 +16,7 @@
         <Sidebar
           ref="sidebar"
           :items="items"
+          :active-item="activeTab"
           font-size="14px"
           :colors="{
             sidebarItemHoverColor: '#f0f0f0',

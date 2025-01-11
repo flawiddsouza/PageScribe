@@ -17,6 +17,7 @@
       v-for="item in items"
       :key="item.id"
       :item="item"
+      :active-item="activeItem"
       :level="0"
       :selected-items="selectedItems"
       :right-clicked-item="rightClickedItem"
@@ -36,6 +37,7 @@ import type { DirectoryItem, ShowInput } from './types';
 
 const props = defineProps<{
   items: DirectoryItem[],
+  activeItem: DirectoryItem | null,
   fontSize: string,
   colors: {
     sidebarItemHoverColor: string,

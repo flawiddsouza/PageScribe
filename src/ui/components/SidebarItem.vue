@@ -36,6 +36,7 @@
       v-for="child in item.children"
       :key="child.id"
       :item="child"
+      :active-item="activeItem"
       :level="level + 1"
       :selected-items="selectedItems"
       :right-clicked-item="rightClickedItem"
@@ -55,6 +56,7 @@ import type { DirectoryItem, ShowInput } from './types';
 
 const props = defineProps<{
   item: DirectoryItem,
+  activeItem: DirectoryItem | null,
   level: number,
   selectedItems: Set<DirectoryItem>,
   rightClickedItem: DirectoryItem | null,
@@ -68,7 +70,7 @@ const leftMargin = 14;
 const isOpen = ref(true);
 
 const isActive = computed(() => {
-  return Array.from(props.selectedItems).some(selectedItem => selectedItem.id === props.item.id);
+  return Array.from(props.selectedItems).some(selectedItem => selectedItem.id === props.item.id) || props.activeItem?.id === props.item.id;
 });
 
 const isRightClicked = computed(() => {
