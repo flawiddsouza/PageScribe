@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, useTemplateRef } from 'vue';
+import { onBeforeMount, ref, useTemplateRef, watch } from 'vue';
 import SplitPanes from './SplitPanes.vue';
 import Pane from './Pane.vue';
 import Sidebar from './Sidebar.vue';
@@ -78,7 +78,7 @@ import smalltalk from 'smalltalk';
 
 import type { DirectoryItem, ShowInput } from './types';
 import { PluginManifest } from '../../../src/shared/types';
-import { findItemByIdInTree, flattenTree } from '../utils';
+import { findAllAncestorIdsByChildId, findItemByIdInTree, flattenTree } from '../utils';
 
 const sidebarRef = useTemplateRef('sidebar');
 const items = ref<DirectoryItem[]>([]);
@@ -95,6 +95,14 @@ onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
   if (lastOpenedFolder) {
     loadFolder(lastOpenedFolder);
+  }
+});
+
+watch(() => activeTab.value, (newActiveTab) => {
+  if (newActiveTab) {
+    // expand all ancestors of the active tab in the sidebar
+    const ancestorIds = findAllAncestorIdsByChildId(items.value, newActiveTab.id);
+    ancestorIds?.forEach((ancestorId) => collapsedSidebarItems.value.delete(ancestorId));
   }
 });
 
@@ -387,6 +395,10 @@ async function handleDrop(item: DirectoryItem) {
 }
 
 function handleCollapseSidebarItem(item: DirectoryItem, collapsed: boolean) {
+  if (item.type === 'file') {
+    return;
+  }
+
   if (collapsed) {
     collapsedSidebarItems.value.add(item.id);
   } else {

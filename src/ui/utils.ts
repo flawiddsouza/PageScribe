@@ -1,4 +1,4 @@
-import type { DirectoryItem } from "./components/types";
+import type { DirectoryItem } from './components/types';
 
 export function findItemByIdInTree(id: string, treeItems: DirectoryItem[]): DirectoryItem | null {
   for (const item of treeItems) {
@@ -9,6 +9,22 @@ export function findItemByIdInTree(id: string, treeItems: DirectoryItem[]): Dire
       const found = findItemByIdInTree(id, item.children);
       if (found) {
         return found;
+      }
+    }
+  }
+  return null;
+}
+
+export function findAllAncestorIdsByChildId(tree: DirectoryItem[], childId: string, currentPath: string[] = []): string[] | null {
+  for (const node of tree) {
+    if (node.id === childId) {
+      return currentPath;
+    }
+
+    if (node.children) {
+      const ancestorsPath = findAllAncestorIdsByChildId(node.children, childId, [...currentPath, node.id]);
+      if (ancestorsPath) {
+        return ancestorsPath;
       }
     }
   }

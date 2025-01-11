@@ -39,7 +39,6 @@ export function getOpenTabs(folderPath: string): { openTabs: string[], activeTab
 }
 
 export function saveOpenTabs(folderPath: string, openTabs: string[], activeTab: string) {
-  console.log('saveOpenTabs', folderPath, openTabs, activeTab);
   db.prepare(`
     INSERT INTO folder_config (folder_path, open_tabs, active_tab)
     VALUES (?, ?, ?)
