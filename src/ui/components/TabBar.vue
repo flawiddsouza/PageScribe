@@ -2,6 +2,7 @@
   <div class="tabs">
     <div
       v-for="(tab, index) in tabs"
+      ref="tab"
       :key="tab.id"
       class="tab"
       :class="{ active: tab === activeTab }"
@@ -24,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted } from 'vue';
+import { onUnmounted, watch, useTemplateRef, nextTick, onMounted } from 'vue';
 import { DirectoryItem } from './types';
 
 const props = defineProps<{
@@ -35,6 +36,8 @@ const props = defineProps<{
 const emit = defineEmits(['tab-clicked', 'close-tab', 'reorder-tabs']);
 
 let draggedTabIndex: number | null = null;
+
+const tabRefs = useTemplateRef('tab');
 
 function onDragStart(event: DragEvent, index: number) {
   draggedTabIndex = index;
@@ -59,6 +62,20 @@ function cycleTabs(forward: boolean) {
   emit('tab-clicked', props.tabs[newIndex]);
 }
 
+function scrollToActiveTab() {
+  if (props.activeTab) {
+    nextTick(() => {
+      const tabIndex = props.tabs.findIndex(tab => tab === props.activeTab);
+      if (tabRefs.value && tabRefs.value[tabIndex]) {
+        tabRefs.value[tabIndex].scrollIntoView({
+          block: 'nearest',
+          inline: 'center',
+        });
+      }
+    });
+  }
+}
+
 function onKeyDown(event: KeyboardEvent) {
   if (event.ctrlKey && event.key.toLowerCase() === 'w') {
     if (props.activeTab) {
@@ -77,6 +94,14 @@ window.addEventListener('keydown', onKeyDown);
 onUnmounted(() => {
   window.removeEventListener('keydown', onKeyDown);
 });
+
+onMounted(() => {
+  scrollToActiveTab();
+});
+
+watch(() => props.activeTab, () => {
+  scrollToActiveTab();
+});
 </script>
 
 <style scoped>
@@ -84,6 +109,7 @@ onUnmounted(() => {
   display: flex;
   background-color: #f3f3f3;
   user-select: none;
+  overflow: auto;
 }
 
 .tab {
@@ -91,6 +117,7 @@ onUnmounted(() => {
   cursor: pointer;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .tab.active {
