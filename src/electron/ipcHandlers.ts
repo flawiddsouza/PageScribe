@@ -2,6 +2,7 @@ import { ipcMain, dialog, shell } from 'electron';
 import { getDirectoryTree, getPluginManifests } from './utils';
 import fs from 'fs/promises';
 import path from 'path';
+import * as db from './db';
 
 ipcMain.handle('open-folder', async () => {
   const result = await dialog.showOpenDialog({
@@ -81,4 +82,13 @@ ipcMain.handle('get-plugin-manifests', async () => {
 
 ipcMain.handle('reveal-in-file-explorer', async (event, basePath: string, fileOrFolderPath: string) => {
   shell.showItemInFolder(path.join(basePath, fileOrFolderPath));
+});
+
+ipcMain.handle('get-open-tabs', async (event, folderPath: string) => {
+  const { openTabs, activeTab } = db.getOpenTabs(folderPath);
+  return { openTabs, activeTab };
+});
+
+ipcMain.handle('save-open-tabs', async (event, folderPath: string, openTabs: string[], activeTab: string) => {
+  db.saveOpenTabs(folderPath, openTabs, activeTab);
 });

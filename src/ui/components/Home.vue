@@ -87,7 +87,7 @@ const draggedItem = ref<DirectoryItem | null>(null);
 onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
   if (lastOpenedFolder) {
-    getDirectoryTree(lastOpenedFolder);
+    loadFolder(lastOpenedFolder);
   }
 
   pluginManifests = await ipc.getPluginManifests();
@@ -104,8 +104,31 @@ async function openFolder() {
   if (folderPath !== null) {
     resetView();
     localStorage.setItem('lastOpenedFolder', folderPath);
-    getDirectoryTree(folderPath);
+    await loadFolder(folderPath);
   }
+}
+
+function findItemByIdInTree(id: string, treeItems: DirectoryItem[]): DirectoryItem | null {
+  for (const item of treeItems) {
+    if (item.id === id) {
+      return item;
+    }
+    if (item.children) {
+      const found = findItemByIdInTree(id, item.children);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+
+async function loadFolder(folderPath: string) {
+  await getDirectoryTree(folderPath);
+  const { openTabs, activeTab: savedActiveTab } = await ipc.getOpenTabs(folderPath);
+
+  tabs.value = openTabs.map(tabId => findItemByIdInTree(tabId, items.value)).filter(Boolean) as DirectoryItem[];
+  activeTab.value = findItemByIdInTree(savedActiveTab, items.value) || null;
 }
 
 async function getDirectoryTree(filePath: string) {
@@ -119,6 +142,7 @@ function handleSidebarItemClick(item: DirectoryItem) {
     tabs.value.push(item);
   }
   activeTab.value = item;
+  saveOpenTabs();
 }
 
 function createContextMenuItems(item: DirectoryItem): MenuItem[] {
@@ -320,6 +344,8 @@ function closeTab(item: DirectoryItem) {
   if (activeTab.value?.id === item.id) {
     activeTab.value = tabs.value[index] ?? tabs.value[index - 1] ?? null;
   }
+
+  saveOpenTabs();
 }
 
 function handleReorderTabs({ from, to }: { from: number; to: number }) {
@@ -348,5 +374,12 @@ async function handleDrop(item: DirectoryItem) {
   }
 
   draggedItem.value = null;
+}
+
+function saveOpenTabs() {
+  const folderPath = localStorage.getItem('lastOpenedFolder');
+  if (folderPath) {
+    ipc.saveOpenTabs(folderPath, tabs.value.map(tab => tab.id), activeTab.value?.id ?? '');
+  }
 }
 </script>

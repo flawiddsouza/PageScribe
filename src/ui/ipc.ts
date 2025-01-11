@@ -63,3 +63,12 @@ export async function getPluginManifests(): Promise<PluginManifest[]> {
 export async function revealInFileExplorer(basePath: string, fileOrFolderPath: string): Promise<void> {
   await window.electron.ipcRenderer.revealInFileExplorer(basePath, fileOrFolderPath);
 }
+
+export async function getOpenTabs(folderPath: string): Promise<{ openTabs: string[], activeTab: string }> {
+  const result = await window.electron.ipcRenderer.getOpenTabs(folderPath);
+  return result;
+}
+
+export async function saveOpenTabs(folderPath: string, openTabs: string[], activeTab: string): Promise<void> {
+  await window.electron.ipcRenderer.saveOpenTabs(folderPath, openTabs, activeTab);
+}

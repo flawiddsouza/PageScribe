@@ -25,6 +25,7 @@
     "@electron/fuses": "^1.8.0",
     "@eslint/js": "^9.17.0",
     "@stylistic/eslint-plugin-ts": "^2.12.1",
+    "@types/better-sqlite3": "^7.6.12",
     "@types/electron-squirrel-startup": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
@@ -50,6 +51,7 @@
   "dependencies": {
     "@imengyu/vue3-context-menu": "^1.4.4",
     "@vscode/codicons": "^0.0.36",
+    "better-sqlite3": "^11.7.2",
     "electron-squirrel-startup": "^1.0.1",
     "smalltalk": "^4.1.2",
     "tinyglobby": "^0.2.10",

@@ -1,12 +1,15 @@
 import { app, BrowserWindow, net, protocol } from 'electron';
 import path from 'path';
 import started from 'electron-squirrel-startup';
+import * as db from './db';
 import './ipcHandlers';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
+
+db.migrate();
 
 const createWindow = async() => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
