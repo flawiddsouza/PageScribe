@@ -11,6 +11,22 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     extraResource: ['plugins'],
+    // From: https://stackoverflow.com/a/75938588/4932305
+    ignore: [
+      /^\/(src|test|out)/,
+      /^\/node_modules\/electron($|\/)/,
+      /^\/node_modules\/\.bin($|\/)/,
+      /^\/node_modules\/\.cache($|\/)/,
+      /^\/node_modules\/debug($|\/)/,
+      /^\/node_modules\/electron-debug($|\/)/,
+      /^\/node_modules\/electron-devtools-installer($|\/)/,
+      /^\/node_modules\/electron-edge-js($|\/)/,
+      /^\/node_modules\/electron-packager($|\/)/,
+      /^\/node_modules\/electron-winstaller($|\/)/,
+      /^\/node_modules\/\.pnp($|\/)/,
+      /^\/node_modules\/\.s?css-cache($|\/)/,
+      /^\/node_modules\/\.shrinkwrap.yaml$/,
+    ],
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
