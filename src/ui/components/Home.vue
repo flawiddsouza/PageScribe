@@ -17,6 +17,7 @@
           ref="sidebar"
           :items="items"
           :active-item="activeTab"
+          :collapsed-items="collapsedSidebarItems"
           font-size="14px"
           :colors="{
             sidebarItemHoverColor: '#f0f0f0',
@@ -30,6 +31,7 @@
           @contextmenu.prevent="handleSidebarRightClick"
           @drag-start="handleDragStart"
           @drop="handleDrop"
+          @collapse="handleCollapseSidebarItem"
         />
       </Pane>
       <Pane
@@ -85,6 +87,7 @@ let pluginManifests: PluginManifest[] = [];
 const tabs = ref<DirectoryItem[]>([]);
 const activeTab = ref<DirectoryItem | null>(null);
 const draggedItem = ref<DirectoryItem | null>(null);
+const collapsedSidebarItems = ref<Set<string>>(new Set());
 
 onBeforeMount(async () => {
   pluginManifests = await ipc.getPluginManifests();
@@ -112,8 +115,11 @@ async function openFolder() {
 
 async function loadFolder(folderPath: string) {
   await getDirectoryTree(folderPath);
-  const { openTabs, activeTab: savedActiveTab } = await ipc.getOpenTabs(folderPath);
 
+  const collapsedFolders = await ipc.getCollapsedFolders(folderPath);
+  collapsedSidebarItems.value = new Set(collapsedFolders);
+
+  const { openTabs, activeTab: savedActiveTab } = await ipc.getOpenTabs(folderPath);
   tabs.value = openTabs.map(tabId => findItemByIdInTree(tabId, items.value)).filter(Boolean) as DirectoryItem[];
   activeTab.value = findItemByIdInTree(savedActiveTab, items.value) || null;
 }
@@ -380,10 +386,26 @@ async function handleDrop(item: DirectoryItem) {
   draggedItem.value = null;
 }
 
+function handleCollapseSidebarItem(item: DirectoryItem, collapsed: boolean) {
+  if (collapsed) {
+    collapsedSidebarItems.value.add(item.id);
+  } else {
+    collapsedSidebarItems.value.delete(item.id);
+  }
+  saveCollapsedSidebarItems();
+}
+
 function saveOpenTabs() {
   const folderPath = localStorage.getItem('lastOpenedFolder');
   if (folderPath) {
     ipc.saveOpenTabs(folderPath, tabs.value.map(tab => tab.id), activeTab.value?.id ?? '');
+  }
+}
+
+function saveCollapsedSidebarItems() {
+  const folderPath = localStorage.getItem('lastOpenedFolder');
+  if (folderPath) {
+    ipc.saveCollapsedFolders(folderPath, Array.from(collapsedSidebarItems.value));
   }
 }
 </script>

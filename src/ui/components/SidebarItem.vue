@@ -14,7 +14,7 @@
     @dragenter="onDragEnter"
     @dragleave="onDragLeave"
   >
-    <i :class="['codicon', item.type === 'folder' ? (isOpen ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
+    <i :class="['codicon', item.type === 'folder' ? (!collapsedItems.has(item.id) ? 'codicon-chevron-down' : 'codicon-chevron-right') : 'codicon-file', 'icon']" /> {{ item.name }}
   </div>
   <div
     v-if="showInput && (item.id === showInput.parentId || item.id === '')"
@@ -32,13 +32,14 @@
       @blur="(event) => showInput && showInput.callback(true, (event.target as HTMLInputElement).value)"
     >
   </div>
-  <div v-if="item.children && item.type === 'folder' && isOpen">
+  <div v-if="item.children && item.type === 'folder' && !collapsedItems.has(item.id)">
     <sidebar-item
       v-for="child in item.children"
       :key="child.id"
       :item="child"
       :active-item="activeItem"
       :level="level + 1"
+      :collapsed-items="collapsedItems"
       :selected-items="selectedItems"
       :right-clicked-item="rightClickedItem"
       :show-input="showInput"
@@ -46,6 +47,7 @@
       @item-right-clicked="handleChildRightClick"
       @drag-start="onDragStartNested"
       @drop="onDropNested"
+      @collapse="handleCollapse"
     />
   </div>
 </template>
@@ -59,16 +61,16 @@ const props = defineProps<{
   item: DirectoryItem,
   activeItem: DirectoryItem | null,
   level: number,
+  collapsedItems: Set<string>,
   selectedItems: Set<DirectoryItem>,
   rightClickedItem: DirectoryItem | null,
   showInput: ShowInput | null,
 }>();
 
-const emit = defineEmits(['item-clicked', 'item-right-clicked', 'drag-start', 'drop']);
+const emit = defineEmits(['item-clicked', 'item-right-clicked', 'drag-start', 'drop', 'collapse']);
 
 const leftMargin = 14;
 
-const isOpen = ref(true);
 const isDragOver = ref(false);
 
 const itemRef = useTemplateRef('item');
@@ -84,7 +86,7 @@ const isRightClicked = computed(() => {
 // auto open folder when input is shown
 watch(() => props.showInput, (showInput) => {
   if (showInput && showInput.parentId === props.item.id) {
-    isOpen.value = true;
+    emit('collapse', props.item, false);
   }
 });
 
@@ -96,7 +98,11 @@ watch(() => props.activeItem, () => {
 });
 
 function toggle() {
-  isOpen.value = !isOpen.value;
+  if (props.item.type === 'file') {
+    return;
+  }
+
+  emit('collapse', props.item, !props.collapsedItems.has(props.item.id));
 }
 
 function handleChildClick(item: DirectoryItem, event: MouseEvent) {
@@ -144,6 +150,10 @@ function onDragEnter() {
 
 function onDragLeave() {
   isDragOver.value = false;
+}
+
+function handleCollapse(item: DirectoryItem, collapsed: boolean) {
+  emit('collapse', item, collapsed);
 }
 
 const vFocus = {

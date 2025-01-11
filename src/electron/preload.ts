@@ -16,7 +16,10 @@ contextBridge.exposeInMainWorld('electron', {
     moveFolder: (basePath: string, oldFolderPath: string, moveToFolderPath: string) => ipcRenderer.invoke('move-folder', basePath, oldFolderPath, moveToFolderPath),
     getPluginManifests: () => ipcRenderer.invoke('get-plugin-manifests'),
     revealInFileExplorer: (basePath: string, fileOrFolderPath: string) => ipcRenderer.invoke('reveal-in-file-explorer', basePath, fileOrFolderPath),
+    // folder config
     getOpenTabs: (folderPath: string) => ipcRenderer.invoke('get-open-tabs', folderPath),
     saveOpenTabs: (folderPath: string, openTabs: string[], activeTab: string) => ipcRenderer.invoke('save-open-tabs', folderPath, openTabs, activeTab),
+    getCollapsedFolders: (folderPath: string) => ipcRenderer.invoke('get-collapsed-folders', folderPath),
+    saveCollapsedFolders: (folderPath: string, collapsedFolders: string[]) => ipcRenderer.invoke('save-collapsed-folders', folderPath, collapsedFolders),
   }
 });

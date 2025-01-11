@@ -64,6 +64,8 @@ export async function revealInFileExplorer(basePath: string, fileOrFolderPath: s
   await window.electron.ipcRenderer.revealInFileExplorer(basePath, fileOrFolderPath);
 }
 
+// folder config
+
 export async function getOpenTabs(folderPath: string): Promise<{ openTabs: string[], activeTab: string }> {
   const result = await window.electron.ipcRenderer.getOpenTabs(folderPath);
   return result;
@@ -71,4 +73,13 @@ export async function getOpenTabs(folderPath: string): Promise<{ openTabs: strin
 
 export async function saveOpenTabs(folderPath: string, openTabs: string[], activeTab: string): Promise<void> {
   await window.electron.ipcRenderer.saveOpenTabs(folderPath, openTabs, activeTab);
+}
+
+export async function getCollapsedFolders(folderPath: string): Promise<string[]> {
+  const result = await window.electron.ipcRenderer.getCollapsedFolders(folderPath);
+  return result;
+}
+
+export async function saveCollapsedFolders(folderPath: string, collapsedFolders: string[]): Promise<void> {
+  await window.electron.ipcRenderer.saveCollapsedFolders(folderPath, collapsedFolders);
 }

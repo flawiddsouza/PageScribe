@@ -20,8 +20,11 @@ declare global {
         moveFolder: (basePath: string, oldFolderPath: string, moveToFolderPath: string) => Promise<void>;
         getPluginManifests: () => Promise<PluginManifest[]>;
         revealInFileExplorer: (basePath: string, fileOrFolderPath: string) => Promise<void>;
+        // folder config
         getOpenTabs: (folderPath: string) => Promise<{ openTabs: string[], activeTab: string }>;
         saveOpenTabs: (folderPath: string, openTabs: string[], activeTab: string) => Promise<void>;
+        getCollapsedFolders: (folderPath: string) => Promise<string[]>;
+        saveCollapsedFolders: (folderPath: string, collapsedFolders: string[]) => Promise<void>;
       };
     };
   }

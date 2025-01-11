@@ -84,6 +84,8 @@ ipcMain.handle('reveal-in-file-explorer', async (event, basePath: string, fileOr
   shell.showItemInFolder(path.join(basePath, fileOrFolderPath));
 });
 
+// folder config
+
 ipcMain.handle('get-open-tabs', async (event, folderPath: string) => {
   const { openTabs, activeTab } = db.getOpenTabs(folderPath);
   return { openTabs, activeTab };
@@ -91,4 +93,13 @@ ipcMain.handle('get-open-tabs', async (event, folderPath: string) => {
 
 ipcMain.handle('save-open-tabs', async (event, folderPath: string, openTabs: string[], activeTab: string) => {
   db.saveOpenTabs(folderPath, openTabs, activeTab);
+});
+
+ipcMain.handle('get-collapsed-folders', async (event, folderPath: string) => {
+  const collapsedFolders = db.getCollapsedFolders(folderPath);
+  return collapsedFolders;
+});
+
+ipcMain.handle('save-collapsed-folders', async (event, folderPath: string, collapsedFolders: string[]) => {
+  db.saveCollapsedFolders(folderPath, collapsedFolders);
 });

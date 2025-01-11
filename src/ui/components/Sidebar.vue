@@ -19,6 +19,7 @@
       :item="item"
       :active-item="activeItem"
       :level="0"
+      :collapsed-items="collapsedItems"
       :selected-items="selectedItems"
       :right-clicked-item="rightClickedItem"
       :show-input="showInput"
@@ -26,6 +27,7 @@
       @item-right-clicked="handleItemRightClick"
       @drag-start="(item, ev) => $emit('drag-start', item, ev)"
       @drop="(item, ev) => $emit('drop', item, ev)"
+      @collapse="(item, collapse) => $emit('collapse', item, collapse)"
     />
   </div>
 </template>
@@ -38,6 +40,7 @@ import type { DirectoryItem, ShowInput } from './types';
 const props = defineProps<{
   items: DirectoryItem[],
   activeItem: DirectoryItem | null,
+  collapsedItems: Set<string>,
   fontSize: string,
   colors: {
     sidebarItemHoverColor: string,
@@ -53,7 +56,7 @@ const sidebarRef = useTemplateRef('sidebar');
 const selectedItems = ref<Set<DirectoryItem>>(new Set());
 const rightClickedItem = ref<DirectoryItem | null>(null);
 
-const emit = defineEmits(['item-clicked', 'item-right-clicked', 'sidebar-right-clicked', 'drag-start', 'drop']);
+const emit = defineEmits(['item-clicked', 'item-right-clicked', 'sidebar-right-clicked', 'drag-start', 'drop', 'collapse']);
 
 function handleItemClick(item: DirectoryItem, event: MouseEvent) {
   const itemClone = structuredClone(toRaw(item));
