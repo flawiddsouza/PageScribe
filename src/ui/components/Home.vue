@@ -75,6 +75,7 @@ import smalltalk from 'smalltalk';
 
 import type { DirectoryItem, ShowInput } from './types';
 import { PluginManifest } from '../../../src/shared/types';
+import { findItemByIdInTree } from '../utils';
 
 const sidebarRef = useTemplateRef('sidebar');
 const items = ref<DirectoryItem[]>([]);
@@ -106,21 +107,6 @@ async function openFolder() {
     localStorage.setItem('lastOpenedFolder', folderPath);
     await loadFolder(folderPath);
   }
-}
-
-function findItemByIdInTree(id: string, treeItems: DirectoryItem[]): DirectoryItem | null {
-  for (const item of treeItems) {
-    if (item.id === id) {
-      return item;
-    }
-    if (item.children) {
-      const found = findItemByIdInTree(id, item.children);
-      if (found) {
-        return found;
-      }
-    }
-  }
-  return null;
 }
 
 async function loadFolder(folderPath: string) {
