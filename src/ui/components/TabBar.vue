@@ -1,5 +1,9 @@
 <template>
-  <div class="tabs">
+  <div
+    ref="tabs"
+    class="tabs"
+    @wheel.prevent="scrollTabs"
+  >
     <div
       v-for="(tab, index) in tabs"
       ref="tab"
@@ -7,7 +11,7 @@
       class="tab"
       :class="{ active: tab === activeTab }"
       draggable="true"
-      @mousedown="emit('tab-clicked', tab)"
+      @mousedown="emit('tab-clicked', tab); justClickedTab = tab;"
       @mousedown.middle.prevent="emit('close-tab', tab)"
       @dragstart="onDragStart($event, index)"
       @dragover.prevent
@@ -25,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, watch, useTemplateRef, nextTick, onMounted } from 'vue';
+import { onUnmounted, watch, useTemplateRef, nextTick, onMounted, ref } from 'vue';
 import { DirectoryItem } from './types';
 
 const props = defineProps<{
@@ -37,7 +41,10 @@ const emit = defineEmits(['tab-clicked', 'close-tab', 'reorder-tabs']);
 
 let draggedTabIndex: number | null = null;
 
+const tabsRef = useTemplateRef('tabs');
 const tabRefs = useTemplateRef('tab');
+
+const justClickedTab = ref<DirectoryItem | null>(null);
 
 function onDragStart(event: DragEvent, index: number) {
   draggedTabIndex = index;
@@ -64,6 +71,12 @@ function cycleTabs(forward: boolean) {
 
 function scrollToActiveTab() {
   if (props.activeTab) {
+    // don't scroll if the tab was just clicked, as it will already be in view and a scroll jump is annoying
+    if (justClickedTab.value === props.activeTab) {
+      justClickedTab.value = null;
+      return;
+    }
+
     nextTick(() => {
       const tabIndex = props.tabs.findIndex(tab => tab === props.activeTab);
       if (tabRefs.value && tabRefs.value[tabIndex]) {
@@ -74,6 +87,14 @@ function scrollToActiveTab() {
       }
     });
   }
+}
+
+function scrollTabs(event: WheelEvent) {
+  if (!tabsRef.value) {
+    throw new Error('tabsRef is not set - this should not happen');
+  };
+
+  tabsRef.value.scrollLeft += event.deltaY;
 }
 
 function onKeyDown(event: KeyboardEvent) {
