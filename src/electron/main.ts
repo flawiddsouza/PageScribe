@@ -43,7 +43,9 @@ const createWindow = async() => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.maximize();
 };
