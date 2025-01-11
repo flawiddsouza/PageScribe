@@ -85,12 +85,12 @@ const activeTab = ref<DirectoryItem | null>(null);
 const draggedItem = ref<DirectoryItem | null>(null);
 
 onBeforeMount(async () => {
+  pluginManifests = await ipc.getPluginManifests();
+
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
   if (lastOpenedFolder) {
     loadFolder(lastOpenedFolder);
   }
-
-  pluginManifests = await ipc.getPluginManifests();
 });
 
 function resetView() {
