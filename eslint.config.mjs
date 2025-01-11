@@ -16,6 +16,7 @@ export default [
   {
     ignores: [
       '.vite',
+      'out',
       'plugins/scribe-renderer/dist',
     ]
   },

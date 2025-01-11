@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, net, protocol } from 'electron';
 import path from 'path';
 import started from 'electron-squirrel-startup';
 import './ipcHandlers';
@@ -15,6 +15,14 @@ const createWindow = async() => {
     installExtension(VUEJS_DEVTOOLS);
   }
 
+  protocol.handle('plugins', (request) => {
+    const appPath = MAIN_WINDOW_VITE_DEV_SERVER_URL ? app.getAppPath() : path.join(app.getAppPath(), '..');
+    const pluginDir = path.join(appPath, 'plugins');
+    const filePath = request.url.slice('plugins://'.length);
+    const finalPath = path.join(pluginDir, filePath);
+    return net.fetch(finalPath);
+  });
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -28,7 +36,7 @@ const createWindow = async() => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
-    mainWindow.loadFile(path.join(__dirname, `../ui/renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
   // Open the DevTools.

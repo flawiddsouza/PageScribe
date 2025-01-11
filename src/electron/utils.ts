@@ -4,6 +4,7 @@ import { PluginManifestSchema } from '../shared/types';
 import type { PluginManifest } from '../shared/types';
 import fs from 'fs/promises';
 import path from 'path';
+import { app } from 'electron';
 
 export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
   const result: DirectoryItem[] = [];
@@ -61,7 +62,8 @@ export async function getDirectoryTree(dir: string): Promise<DirectoryItem[]> {
 }
 
 export async function getPluginManifests() : Promise<PluginManifest[]> {
-  const pluginDir = path.join(__dirname, '../../plugins');
+  const appPath = MAIN_WINDOW_VITE_DEV_SERVER_URL ? app.getAppPath() : path.join(app.getAppPath(), '..');
+  const pluginDir = path.join(appPath, 'plugins');
   const pluginFolders = await fs.readdir(pluginDir);
 
   const manifests: PluginManifest[] = [];

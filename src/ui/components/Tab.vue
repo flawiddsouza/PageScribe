@@ -71,11 +71,11 @@ async function renderFile() {
       const stylesheet = document.createElement('link');
       stylesheet.id = 'plugin-stylesheet';
       stylesheet.rel = 'stylesheet';
-      stylesheet.href = `../../../plugins/${pluginRenderer.folder}/${pluginRenderer.stylesheet}`;
+      stylesheet.href = `plugins://${pluginRenderer.folder}/${pluginRenderer.stylesheet}`;
       document.head.appendChild(stylesheet);
     }
 
-    const { default: Renderer } = await import(/* @vite-ignore */ `../../../plugins/${pluginRenderer.folder}/${pluginRenderer.renderer}`);
+    const { default: Renderer } = await import(/* @vite-ignore */ `plugins://${pluginRenderer.folder}/${pluginRenderer.renderer}`);
 
     let fontFamily = '';
     let fontSize = '';
