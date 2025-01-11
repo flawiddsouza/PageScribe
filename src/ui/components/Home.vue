@@ -76,7 +76,7 @@ import smalltalk from 'smalltalk';
 
 import type { DirectoryItem, ShowInput } from './types';
 import { PluginManifest } from '../../../src/shared/types';
-import { findItemByIdInTree } from '../utils';
+import { findItemByIdInTree, flattenTree } from '../utils';
 
 const sidebarRef = useTemplateRef('sidebar');
 const items = ref<DirectoryItem[]>([]);
@@ -161,9 +161,23 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
     if (confirmed) {
       const deleteMethod = type === 'file' ? ipc.deleteFile : ipc.deleteFolder;
       await deleteMethod(basePath, item.id);
+
+      // deleting a file / folder should close the open tab related to it
       if (tabs.value.some((tab) => tab.id === item.id)) {
         closeTab(item);
       }
+
+      // deleting a parent / grand parent folder should close the open files / folders that come under it
+      if (item.type === 'folder') {
+        const itemInTree = findItemByIdInTree(item.id, items.value);
+        if (itemInTree?.children) {
+          const flattenedTree = flattenTree(itemInTree?.children);
+          const tabsToClose = tabs.value.filter((tab) => flattenedTree.some((treeItem) => treeItem.id === tab.id));
+          tabsToClose.forEach((tab) => closeTab(tab));
+        }
+      }
+
+      // reload the directory tree
       getDirectoryTree(basePath);
     }
   };
