@@ -23,10 +23,14 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const emit = defineEmits(['resized']);
+
 const flexGrow = ref(props.flexGrow);
 
 watch(() => props.flexGrow, (newVal) => {
   flexGrow.value = newVal;
+  emit('resized', newVal);
 });
 </script>
 

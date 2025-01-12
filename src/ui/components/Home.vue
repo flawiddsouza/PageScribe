@@ -2,9 +2,10 @@
   <main style="display: grid; grid-template-rows: 1fr; height: 100dvh;">
     <SplitPanes horizontal>
       <Pane
-        :flex-grow="0.13"
+        :flex-grow="paneProportionalWidthLeft"
         min-size="200px"
         style="display: grid; grid-template-rows: auto 1fr;"
+        @resized="savePaneProportionalWidthLeft"
       >
         <button
           class="no-radius"
@@ -35,8 +36,9 @@
         />
       </Pane>
       <Pane
-        :flex-grow="1"
+        :flex-grow="paneProportionalWidthRight"
         :hide-resizer="true"
+        @resized="savePaneProportionalWidthRight"
       >
         <div
           v-if="activeTab"
@@ -88,6 +90,8 @@ const tabs = ref<DirectoryItem[]>([]);
 const activeTab = ref<DirectoryItem | null>(null);
 const draggedItem = ref<DirectoryItem | null>(null);
 const collapsedSidebarItems = ref<Set<string>>(new Set());
+const paneProportionalWidthLeft = ref(0.13);
+const paneProportionalWidthRight = ref(1);
 
 onBeforeMount(async () => {
   pluginManifests = await ipc.getPluginManifests();
@@ -95,6 +99,16 @@ onBeforeMount(async () => {
   const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
   if (lastOpenedFolder) {
     loadFolder(lastOpenedFolder);
+  }
+
+  const savedPaneProportionalWidthLeft = localStorage.getItem('paneProportionalWidthLeft');
+  if (savedPaneProportionalWidthLeft) {
+    paneProportionalWidthLeft.value = parseFloat(savedPaneProportionalWidthLeft);
+  }
+
+  const savedPaneProportionalWidthRight = localStorage.getItem('paneProportionalWidthRight');
+  if (savedPaneProportionalWidthRight) {
+    paneProportionalWidthRight.value = parseFloat(savedPaneProportionalWidthRight);
   }
 });
 
@@ -419,5 +433,13 @@ function saveCollapsedSidebarItems() {
   if (folderPath) {
     ipc.saveCollapsedFolders(folderPath, Array.from(collapsedSidebarItems.value));
   }
+}
+
+function savePaneProportionalWidthLeft(width: number) {
+  localStorage.setItem('paneProportionalWidthLeft', width.toString());
+}
+
+function savePaneProportionalWidthRight(width: number) {
+  localStorage.setItem('paneProportionalWidthRight', width.toString());
 }
 </script>
