@@ -1,6 +1,7 @@
-import { app, BrowserWindow, net, protocol } from 'electron';
+import { app, BrowserWindow, net, protocol, screen } from 'electron';
 import path from 'path';
 import started from 'electron-squirrel-startup';
+import windowStateKeeper from './utils/window-state';
 import * as db from './db';
 import './ipcHandlers';
 
@@ -26,14 +27,26 @@ const createWindow = async() => {
     return net.fetch(finalPath);
   });
 
+  const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
+  const winStateOptions = {
+    defaultWidth: parseInt((workAreaSize.width * 0.75).toString()),
+    defaultHeight: parseInt((workAreaSize.height * 0.75).toString()),
+    defaultMaximize: true,
+  };
+  const winState = windowStateKeeper(winStateOptions);
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    x: winState.x,
+    y: winState.y,
+    width: winState.width,
+    height: winState.height,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+
+  winState.manage(mainWindow);
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
@@ -46,8 +59,6 @@ const createWindow = async() => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.webContents.openDevTools();
   }
-
-  mainWindow.maximize();
 };
 
 // This method will be called when Electron has finished
