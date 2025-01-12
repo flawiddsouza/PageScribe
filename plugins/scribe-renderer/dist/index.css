@@ -289,6 +289,9 @@ img.ProseMirror-separator {
   height: 100%;
   overflow: auto;
 }
+.ProseMirror :first-child {
+  margin-top: 0;
+}
 .ProseMirror-menubar {
   min-height: 0 !important;
 }
