@@ -1,5 +1,6 @@
-import { app, BrowserWindow, net, protocol, screen } from 'electron';
+import { app, BrowserWindow, protocol, screen } from 'electron';
 import path from 'path';
+import fs from 'fs/promises';
 import started from 'electron-squirrel-startup';
 import windowStateKeeper from './utils/window-state';
 import * as db from './db';
@@ -19,12 +20,25 @@ const createWindow = async() => {
     installExtension(VUEJS_DEVTOOLS);
   }
 
-  protocol.handle('plugins', (request) => {
+  protocol.handle('plugins', async(request) => {
     const appPath = MAIN_WINDOW_VITE_DEV_SERVER_URL ? app.getAppPath() : path.join(app.getAppPath(), '..');
     const pluginDir = path.join(appPath, 'plugins');
     const filePath = request.url.slice('plugins://'.length);
     const finalPath = path.join(pluginDir, filePath);
-    return net.fetch(finalPath);
+    const fileContent = await fs.readFile(finalPath);
+
+    let mimeType = '';
+    if (filePath.endsWith('.js')) {
+      mimeType = 'application/javascript';
+    } else if (filePath.endsWith('.css')) {
+      mimeType = 'text/css';
+    }
+
+    return new Response(fileContent, {
+      headers: {
+        'Content-Type': mimeType
+      }
+    });
   });
 
   const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
