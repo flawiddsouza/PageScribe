@@ -14356,6 +14356,18 @@ function createEditor(mountPoint, fileContent, updateCallback) {
       doc: mySchema.nodeFromJSON(content),
       plugins: exampleSetup({ schema: mySchema })
     }),
+    // From: https://github.com/bluesky-social/social-app/pull/6658/files
+    clipboardTextParser(text, context) {
+      const blocks = text.split(/(?:\r\n?|\n)/);
+      const nodes2 = blocks.map((line) => {
+        return Node2.fromJSON(
+          context.doc.type.schema,
+          line.length > 0 ? { type: "paragraph", content: [{ type: "text", text: line }] } : { type: "paragraph", content: [] }
+        );
+      });
+      const fragment = Fragment.fromArray(nodes2);
+      return Slice.maxOpen(fragment);
+    },
     attributes: {
       spellcheck: "false"
     },
