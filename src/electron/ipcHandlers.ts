@@ -1,8 +1,9 @@
-import { ipcMain, dialog, shell } from 'electron';
+import { ipcMain, dialog, shell, IpcMainInvokeEvent } from 'electron';
 import { getDirectoryTree, getPluginManifests } from './utils';
 import fs from 'fs/promises';
 import path from 'path';
 import * as db from './db';
+import { RenameFileOrFolderResult } from 'src/ui/components/types';
 
 ipcMain.handle('open-folder', async () => {
   const result = await dialog.showOpenDialog({
@@ -45,15 +46,33 @@ ipcMain.handle('delete-folder', async (event, basePath: string, folderPath: stri
   await fs.rm(path.join(basePath, folderPath), { recursive: true });
 });
 
-ipcMain.handle('rename-file', async (event, basePath: string, oldFilePath: string, newFileName: string) => {
+async function renameFile(event: IpcMainInvokeEvent, basePath: string, oldFilePath: string, newFileName: string): Promise<RenameFileOrFolderResult> {
   const newFilePath = path.join(path.dirname(oldFilePath), newFileName);
   await fs.rename(path.join(basePath, oldFilePath), path.join(basePath, newFilePath));
-});
 
-ipcMain.handle('rename-folder', async (event, basePath: string, oldFolderPath: string, newFolderName: string) => {
+  return [
+    {
+      oldId: oldFilePath,
+      newId: newFilePath,
+    }
+  ];
+}
+
+ipcMain.handle('rename-file', renameFile);
+
+async function renameFolder(event: IpcMainInvokeEvent, basePath: string, oldFolderPath: string, newFolderName: string): Promise<RenameFileOrFolderResult> {
   const newFolderPath = path.join(path.dirname(oldFolderPath), newFolderName);
   await fs.rename(path.join(basePath, oldFolderPath), path.join(basePath, newFolderPath));
-});
+
+  return [
+    {
+      oldId: oldFolderPath,
+      newId: newFolderPath,
+    }
+  ];
+}
+
+ipcMain.handle('rename-folder', renameFolder);
 
 ipcMain.handle('move-file', async (event, basePath: string, oldFilePath: string, moveToFolderPath: string) => {
   const currentPath = path.join(basePath, oldFilePath);

@@ -214,8 +214,31 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
     const newName = await smalltalk.prompt(`Rename ${type}`, `Enter new name for ${item.name}:`, item.name).catch(() => null);
     if (newName) {
       const renameMethod = type === 'file' ? ipc.renameFile : ipc.renameFolder;
-      await renameMethod(basePath, item.id, newName);
+      const oldIdNewIdMap = await renameMethod(basePath, item.id, newName);
       getDirectoryTree(basePath);
+
+      // Remap activeTab, tabs, and collapsedSidebarItems
+      oldIdNewIdMap.forEach(({ oldId, newId }) => {
+        if (activeTab.value?.id === oldId) {
+          activeTab.value.id = newId;
+          activeTab.value.name = newName;
+        }
+
+        tabs.value = tabs.value.map(tab => {
+          if (tab.id === oldId) {
+            tab.id = newId;
+            tab.name = newName;
+          }
+          return tab;
+        });
+
+        if (collapsedSidebarItems.value.has(oldId)) {
+          collapsedSidebarItems.value.delete(oldId);
+          collapsedSidebarItems.value.add(newId);
+        }
+      });
+
+      saveOpenTabs();
     }
   };
 

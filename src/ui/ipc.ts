@@ -1,4 +1,4 @@
-import type { DirectoryItem, ReadFileResult } from './components/types';
+import type { DirectoryItem, ReadFileResult, RenameFileOrFolderResult } from './components/types';
 import type { PluginManifest } from '../shared/types';
 
 export async function openFolder(): Promise<string | null> {
@@ -39,12 +39,14 @@ export async function deleteFolder(basePath: string, folderPath: string): Promis
   await window.electron.ipcRenderer.deleteFolder(basePath, folderPath);
 }
 
-export async function renameFile(basePath: string, oldFilePath: string, newFileName: string): Promise<void> {
-  await window.electron.ipcRenderer.renameFile(basePath, oldFilePath, newFileName);
+export async function renameFile(basePath: string, oldFilePath: string, newFileName: string): Promise<RenameFileOrFolderResult> {
+  const oldIdNewIdMap = await window.electron.ipcRenderer.renameFile(basePath, oldFilePath, newFileName);
+  return oldIdNewIdMap;
 }
 
-export async function renameFolder(basePath: string, oldFolderPath: string, newFolderName: string): Promise<void> {
-  await window.electron.ipcRenderer.renameFolder(basePath, oldFolderPath, newFolderName);
+export async function renameFolder(basePath: string, oldFolderPath: string, newFolderName: string): Promise<RenameFileOrFolderResult> {
+  const oldIdNewIdMap = await window.electron.ipcRenderer.renameFolder(basePath, oldFolderPath, newFolderName);
+  return oldIdNewIdMap;
 }
 
 export async function moveFile(basePath: string, oldFilePath: string, moveToFolderPath: string): Promise<void> {

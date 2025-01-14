@@ -1,6 +1,6 @@
 export {};
 
-import type { DirectoryItem, PluginManifest, ReadFileResult } from './components/types';
+import type { DirectoryItem, PluginManifest, ReadFileResult, RenameFileOrFolderResult } from './components/types';
 
 declare global {
   interface Window {
@@ -14,8 +14,8 @@ declare global {
         writeFile: (basePath: string, filePath: string, fileContent: string) => Promise<void>;
         deleteFile: (basePath: string, filePath: string) => Promise<void>;
         deleteFolder: (basePath: string, folderPath: string) => Promise<void>;
-        renameFile: (basePath: string, oldFilePath: string, newFileName: string) => Promise<void>;
-        renameFolder: (basePath: string, oldFolderPath: string, newFolderName: string) => Promise<void>;
+        renameFile: (basePath: string, oldFilePath: string, newFileName: string) => Promise<RenameFileOrFolderResult>;
+        renameFolder: (basePath: string, oldFolderPath: string, newFolderName: string) => Promise<RenameFileOrFolderResult>;
         moveFile: (basePath: string, oldFilePath: string, moveToFolderPath: string) => Promise<void>;
         moveFolder: (basePath: string, oldFolderPath: string, moveToFolderPath: string) => Promise<void>;
         getPluginManifests: () => Promise<PluginManifest[]>;

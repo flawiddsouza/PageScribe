@@ -16,3 +16,10 @@ export interface ReadFileResult {
   extension: string;
   fileContent: string;
 }
+
+interface RenameFileOrFolderResultItem {
+  oldId: string;
+  newId: string;
+}
+
+export type RenameFileOrFolderResult = RenameFileOrFolderResultItem[];
