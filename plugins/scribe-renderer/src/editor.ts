@@ -5,7 +5,6 @@ import { schema } from 'prosemirror-schema-basic';
 import { addListNodes } from 'prosemirror-schema-list';
 import { exampleSetup } from 'prosemirror-example-setup';
 import 'prosemirror-view/style/prosemirror.css';
-import 'prosemirror-menu/style/menu.css';
 import 'prosemirror-example-setup/style/style.css';
 import 'prosemirror-gapcursor/style/gapcursor.css';
 import './main.css';
@@ -30,7 +29,7 @@ export function createEditor(mountPoint: HTMLElement, fileContent: string, updat
   const view = new EditorView(mountPoint, {
     state: EditorState.create({
       doc: mySchema.nodeFromJSON(content),
-      plugins: exampleSetup({ schema: mySchema }),
+      plugins: exampleSetup({ schema: mySchema, menuBar: false }),
     }),
     // From: https://github.com/bluesky-social/social-app/pull/6658/files
     clipboardTextParser(text, context) {

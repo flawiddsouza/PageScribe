@@ -14354,7 +14354,7 @@ function createEditor(mountPoint, fileContent, updateCallback) {
   const view = new EditorView(mountPoint, {
     state: EditorState.create({
       doc: mySchema.nodeFromJSON(content),
-      plugins: exampleSetup({ schema: mySchema })
+      plugins: exampleSetup({ schema: mySchema, menuBar: false })
     }),
     // From: https://github.com/bluesky-social/social-app/pull/6658/files
     clipboardTextParser(text, context) {
