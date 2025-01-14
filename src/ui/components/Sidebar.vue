@@ -81,7 +81,12 @@ function handleItemRightClick(item: DirectoryItem, event: MouseEvent) {
   emit('item-right-clicked', item, event);
 }
 
-function deselectAllItems(event: MouseEvent) {
+function deselectAllItems(event?: MouseEvent) {
+  if (event === undefined) {
+    selectedItems.value.clear();
+    return;
+  }
+
   if (event.target === event.currentTarget) {
     selectedItems.value.clear();
     (event.target as HTMLElement).focus();
@@ -116,6 +121,7 @@ function selectAllItems(items: DirectoryItem[]) {
 
 defineExpose({
   clearRightClickedItem,
+  deselectAllItems,
 });
 
 // if focus is within sidebar and I press ctrl + a, select all items

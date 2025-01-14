@@ -157,6 +157,7 @@ function handleSidebarItemClick(item: DirectoryItem) {
     tabs.value.push(item);
   }
   activeTab.value = item;
+  sidebarRef.value?.deselectAllItems();
   saveOpenTabs();
 }
 
@@ -398,6 +399,7 @@ function closeTab(item: DirectoryItem) {
 
   if (activeTab.value?.id === item.id) {
     activeTab.value = tabs.value[index] ?? tabs.value[index - 1] ?? null;
+    sidebarRef.value?.deselectAllItems();
   }
 
   saveOpenTabs();
