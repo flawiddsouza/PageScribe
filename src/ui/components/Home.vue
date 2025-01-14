@@ -172,7 +172,15 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
     if (success && value) {
       const createMethod = type === 'file' ? ipc.createFile : ipc.createFolder;
       await createMethod(basePath, item.id, value);
-      getDirectoryTree(basePath);
+      await getDirectoryTree(basePath);
+
+      if (type === 'file') {
+        const newItemId = item.id + '/' + value;
+        const newItem = findItemByIdInTree(newItemId, items.value);
+        if (newItem) {
+          handleSidebarItemClick(newItem);
+        }
+      }
     }
     showSidebarItemInput.value = null;
   };
