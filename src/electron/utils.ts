@@ -85,3 +85,7 @@ export async function getPluginManifests() : Promise<PluginManifest[]> {
 
   return manifests;
 }
+
+export function normalizePath(fileOrFolderPath: string) {
+  return fileOrFolderPath.replaceAll(path.win32.sep, path.posix.sep);
+}

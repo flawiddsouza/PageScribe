@@ -1,9 +1,10 @@
 import { ipcMain, dialog, shell, IpcMainInvokeEvent } from 'electron';
-import { getDirectoryTree, getPluginManifests } from './utils';
+import { getDirectoryTree, getPluginManifests, normalizePath } from './utils';
 import fs from 'fs/promises';
 import path from 'path';
 import * as db from './db';
-import { RenameFileOrFolderResult } from 'src/ui/components/types';
+import type { RenameFileOrFolderResult } from 'src/ui/components/types';
+import { flattenTree } from '../ui/utils';
 
 ipcMain.handle('open-folder', async () => {
   const result = await dialog.showOpenDialog({
@@ -53,7 +54,7 @@ async function renameFile(event: IpcMainInvokeEvent, basePath: string, oldFilePa
   return [
     {
       oldId: oldFilePath,
-      newId: newFilePath,
+      newId: normalizePath(newFilePath),
     }
   ];
 }
@@ -62,14 +63,25 @@ ipcMain.handle('rename-file', renameFile);
 
 async function renameFolder(event: IpcMainInvokeEvent, basePath: string, oldFolderPath: string, newFolderName: string): Promise<RenameFileOrFolderResult> {
   const newFolderPath = path.join(path.dirname(oldFolderPath), newFolderName);
-  await fs.rename(path.join(basePath, oldFolderPath), path.join(basePath, newFolderPath));
+  const renameTo = path.join(basePath, newFolderPath);
+  await fs.rename(path.join(basePath, oldFolderPath), renameTo);
 
-  return [
+  const allFilesAndFolders = flattenTree(await getDirectoryTree(renameTo));
+
+  const oldIdNewIdMap: RenameFileOrFolderResult = [
     {
       oldId: oldFolderPath,
-      newId: newFolderPath,
+      newId: normalizePath(newFolderPath)
     }
   ];
+
+  for (const fileOrFolder of allFilesAndFolders) {
+    const oldId = `${oldFolderPath}/${normalizePath(fileOrFolder.id)}`;
+    const newId = `${normalizePath(newFolderPath)}/${normalizePath(fileOrFolder.id)}`;
+    oldIdNewIdMap.push({ oldId, newId });
+  }
+
+  return oldIdNewIdMap;
 }
 
 ipcMain.handle('rename-folder', renameFolder);

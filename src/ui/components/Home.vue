@@ -219,16 +219,22 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
       getDirectoryTree(basePath);
 
       // Remap activeTab, tabs, and collapsedSidebarItems
-      oldIdNewIdMap.forEach(({ oldId, newId }) => {
+      oldIdNewIdMap.forEach(({ oldId, newId }, index) => {
         if (activeTab.value?.id === oldId) {
           activeTab.value.id = newId;
-          activeTab.value.name = newName;
+          // first item is the renamed item
+          if (index === 0) {
+            activeTab.value.name = newName;
+          }
         }
 
         tabs.value = tabs.value.map(tab => {
           if (tab.id === oldId) {
             tab.id = newId;
-            tab.name = newName;
+            // first item is the renamed item
+            if (index === 0) {
+              tab.name = newName;
+            }
           }
           return tab;
         });
