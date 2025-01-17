@@ -1,4 +1,4 @@
-import { Command, EditorState } from 'prosemirror-state';
+import { Command, EditorState, Selection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Schema, Slice, Fragment, Node } from 'prosemirror-model';
 import { schema } from 'prosemirror-schema-basic';
@@ -117,5 +117,13 @@ export function createEditor(mountPoint: HTMLElement, fileContent: string, updat
     }
   });
 
-  return view;
+  const focusEnd = () => {
+    view.focus();
+    const selection = Selection.atEnd(view.state.doc);
+    const tr = view.state.tr.setSelection(selection);
+    const state = view.state.apply(tr);
+    view.updateState(state);
+  };
+
+  return { view, focusEnd };
 }

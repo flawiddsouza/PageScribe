@@ -13024,7 +13024,14 @@ function createEditor(mountPoint, fileContent, updateCallback) {
       }
     }
   });
-  return view;
+  const focusEnd = () => {
+    view.focus();
+    const selection = Selection.atEnd(view.state.doc);
+    const tr = view.state.tr.setSelection(selection);
+    const state = view.state.apply(tr);
+    view.updateState(state);
+  };
+  return { view, focusEnd };
 }
 
 // src/index.ts
@@ -13042,13 +13049,13 @@ var index_default = class {
     this.#fileContent = options.fileContent;
   }
   render() {
-    const editor = createEditor(this.#mountPoint, this.#fileContent, (updatedValue) => {
+    const { view: editor, focusEnd } = createEditor(this.#mountPoint, this.#fileContent, (updatedValue) => {
       this.#fileContent = updatedValue;
       this.#onUpdateCallback();
     });
     editor.dom.style.fontFamily = this.#fontFamily;
     editor.dom.style.fontSize = this.#fontSize;
-    editor.focus();
+    focusEnd();
   }
   getFileContent() {
     return this.#fileContent;

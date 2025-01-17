@@ -24,13 +24,13 @@ export default class {
   }
 
   render() {
-    const editor = createEditor(this.#mountPoint, this.#fileContent, (updatedValue) => {
+    const { view: editor, focusEnd } = createEditor(this.#mountPoint, this.#fileContent, (updatedValue) => {
       this.#fileContent = updatedValue;
       this.#onUpdateCallback();
     });
     editor.dom.style.fontFamily = this.#fontFamily;
     editor.dom.style.fontSize = this.#fontSize;
-    editor.focus();
+    focusEnd();
   }
 
   getFileContent() {
