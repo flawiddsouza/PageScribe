@@ -147,7 +147,7 @@ async function loadFolder(folderPath: string) {
 }
 
 async function getDirectoryTree(filePath: string) {
-  document.title = filePath + ' - StoryScribe';
+  document.title = filePath + ' - PageScribe';
   const directoryStructure = await ipc.getDirectoryTree(filePath);
   items.value = directoryStructure;
 }

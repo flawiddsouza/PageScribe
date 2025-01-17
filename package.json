@@ -1,6 +1,6 @@
 {
-  "name": "storyscribe",
-  "productName": "StoryScribe",
+  "name": "pagescribe",
+  "productName": "PageScribe",
   "version": "1.0.0",
   "description": "A story writer's companion",
   "main": ".vite/build/main.js",

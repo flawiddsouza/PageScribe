@@ -2,7 +2,7 @@ import { app } from 'electron';
 import path from 'path';
 import SqliteDatabase from 'better-sqlite3';
 
-const db = new SqliteDatabase(path.join(app.getPath('userData'), 'StoryScribe.db'));
+const db = new SqliteDatabase(path.join(app.getPath('userData'), 'PageScribe.db'));
 
 export function migrate() {
   const { user_version: currentDatabaseVersion } = db.prepare('PRAGMA user_version').get() as { user_version: number };
