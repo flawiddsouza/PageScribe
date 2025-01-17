@@ -1,0 +1,20 @@
+{
+  "manifestVersion": 1,
+  "name": "Table Renderer",
+  "version": "1.0.0",
+  "description": "A plugin that renders table files",
+  "contributes": [
+    {
+      "type": "renderer",
+      "meta": {
+        "type": "file",
+        "renderer": "dist/table-renderer.js",
+        "stylesheet": "dist/table-renderer.css",
+        "fontHint": "text",
+        "supportedExtensions": [
+          ".table"
+        ]
+      }
+    }
+  ]
+}

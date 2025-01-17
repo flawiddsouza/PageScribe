@@ -8,7 +8,7 @@
         @resized="savePaneProportionalWidthLeft"
       >
         <button
-          class="no-radius"
+          class="button no-radius"
           style="width: 100%;"
           @click="openFolder"
         >
