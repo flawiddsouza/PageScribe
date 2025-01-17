@@ -18,6 +18,7 @@ export default [
       '.vite',
       'out',
       'plugins/scribe-renderer/dist',
+      'plugins/table-renderer/dist',
     ]
   },
   pluginJs.configs.recommended,

@@ -181,7 +181,7 @@ const savePageContent = debounce(function() {
     rowStyle,
     startupScript,
     customFunctions,
-  })
+  }, null, 4)
 
   onUpdate(contentToSave)
 }, 500)

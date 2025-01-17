@@ -25,7 +25,7 @@ export default class {
   }
 
   render() {
-    const app = mount(Table, {
+    mount(Table, {
       target: this.#mountPoint,
       props: {
         content: this.#fileContent,

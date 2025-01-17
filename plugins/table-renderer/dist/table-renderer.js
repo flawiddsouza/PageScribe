@@ -18518,15 +18518,19 @@ function mS(h, c) {
   }
   const Ri = _w(
     function() {
-      const k = JSON.stringify({
-        columns: g(S),
-        items: g(x),
-        totals: g(P),
-        widths: g(T),
-        rowStyle: g(X),
-        startupScript: g(q),
-        customFunctions: g(Z)
-      });
+      const k = JSON.stringify(
+        {
+          columns: g(S),
+          items: g(x),
+          totals: g(P),
+          widths: g(T),
+          rowStyle: g(X),
+          startupScript: g(q),
+          customFunctions: g(Z)
+        },
+        null,
+        4
+      );
       v()(k);
     },
     500
