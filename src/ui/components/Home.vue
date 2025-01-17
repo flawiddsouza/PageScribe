@@ -340,7 +340,15 @@ function handleSidebarRightClick(event: MouseEvent) {
     if (success && value) {
       const createMethod = type === 'file' ? ipc.createFile : ipc.createFolder;
       await createMethod(basePath, '', value);
-      getDirectoryTree(basePath);
+      await getDirectoryTree(basePath);
+
+      if (type === 'file') {
+        const newItemId = value;
+        const newItem = findItemByIdInTree(newItemId, items.value);
+        if (newItem) {
+          handleSidebarItemClick(newItem);
+        }
+      }
     }
     showSidebarItemInput.value = null;
 
