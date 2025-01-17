@@ -12,7 +12,7 @@
       :class="{ active: tab === activeTab }"
       draggable="true"
       @mousedown="emit('tab-clicked', tab); justClickedTab = tab;"
-      @mousedown.middle.prevent="emit('close-tab', tab)"
+      @mouseup.middle.prevent="emit('close-tab', tab)"
       @dragstart="onDragStart($event, index)"
       @dragover.prevent
       @drop="onDrop($event, index)"
