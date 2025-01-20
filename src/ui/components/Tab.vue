@@ -10,6 +10,7 @@ import { nextTick, onBeforeMount, onBeforeUnmount, useTemplateRef, watch } from 
 import * as ipc from '../ipc';
 import type { DirectoryItem } from './types';
 import type { PluginManifest } from '../../../src/shared/types';
+import { getPluginRenderer } from '../utils';
 
 const props = defineProps<{
   tab: DirectoryItem;
@@ -23,21 +24,6 @@ let rendererInstance: {
   getFileContent: () => string;
 };
 
-function getPluginRenderer(type: 'renderer', metaType: 'file' | 'folder', extension: string) {
-  for (const manifest of props.pluginManifests) {
-    for (const contribution of manifest.contributes) {
-      if (contribution.type === type && contribution.meta.type === metaType && contribution.meta.supportedExtensions.includes(extension)) {
-        return {
-          folder: manifest.folder,
-          ...contribution.meta,
-        };
-      }
-    }
-  }
-
-  return null;
-}
-
 async function renderFile() {
   const basePath = localStorage.getItem('lastOpenedFolder');
 
@@ -47,7 +33,7 @@ async function renderFile() {
 
   const readFileResult = await ipc.readFile(basePath, props.tab.id);
 
-  let pluginRenderer = getPluginRenderer('renderer', 'file', readFileResult.extension);
+  let pluginRenderer = getPluginRenderer(props.pluginManifests, 'file', readFileResult.extension);
 
   if (!rendererRef.value) {
     throw new Error('rendererRef not available - should not happen');

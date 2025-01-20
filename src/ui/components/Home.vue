@@ -80,7 +80,7 @@ import smalltalk from 'smalltalk';
 
 import type { DirectoryItem, ShowInput } from './types';
 import { PluginManifest } from '../../../src/shared/types';
-import { findAllAncestorIdsByChildId, findItemByIdInTree, flattenTree } from '../utils';
+import { findAllAncestorIdsByChildId, findItemByIdInTree, flattenTree, getPluginNewFileContributions } from '../utils';
 
 const sidebarRef = useTemplateRef('sidebar');
 const items = ref<DirectoryItem[]>([]);
@@ -169,14 +169,16 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
     throw new Error('basePath is null when it\'s not supposed to be - should not happen');
   }
 
-  const handleCallback = async (success: boolean, value: string, type: 'file' | 'folder') => {
+  const handleCallback = async (success: boolean, value: string, type: 'file' | 'folder', extension?: string) => {
     if (success && value) {
+      const name = value + (extension ? extension : '');
+
       const createMethod = type === 'file' ? ipc.createFile : ipc.createFolder;
-      await createMethod(basePath, item.id, value);
+      await createMethod(basePath, item.id, name);
       await getDirectoryTree(basePath);
 
       if (type === 'file') {
-        const newItemId = item.id + '/' + value;
+        const newItemId = item.id + '/' + name;
         const newItem = findItemByIdInTree(newItemId, items.value);
         if (newItem) {
           handleSidebarItemClick(newItem);
@@ -263,17 +265,38 @@ function createContextMenuItems(item: DirectoryItem): MenuItem[] {
   };
 
   if (item.type === 'folder') {
-    return [
-      {
-        label: 'New File...',
+    const newFileContributions = getPluginNewFileContributions(pluginManifests);
+
+    const newFileSubMenu = newFileContributions.map((contribution) => {
+      return {
+        label: contribution.label,
         onClick() {
           showSidebarItemInput.value = {
             parentId: item.id,
             type: 'file',
-            initialValue: '',
-            callback: (success, value) => handleCallback(success, value, 'file'),
+            initialValue: contribution.label,
+            callback: (success, value) => handleCallback(success, value, 'file', contribution.extension),
           };
         },
+      };
+    });
+
+    newFileSubMenu.splice(0, 0, {
+      label: 'New File',
+      onClick() {
+        showSidebarItemInput.value = {
+          parentId: item.id,
+          type: 'file',
+          initialValue: '',
+          callback: (success, value) => handleCallback(success, value, 'file'),
+        };
+      },
+    });
+
+    return [
+      {
+        label: 'New File...',
+        children: newFileSubMenu,
       },
       {
         label: 'New Folder...',

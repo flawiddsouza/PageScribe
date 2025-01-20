@@ -15,6 +15,13 @@
           ".table"
         ]
       }
+    },
+    {
+      "type": "new_file",
+      "meta": {
+        "label": "New Table",
+        "extension": ".table"
+      }
     }
   ]
 }

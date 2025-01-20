@@ -15,6 +15,13 @@
           ".scribe"
         ]
       }
+    },
+    {
+      "type": "new_file",
+      "meta": {
+        "label": "New Scribe File",
+        "extension": ".scribe"
+      }
     }
   ]
 }

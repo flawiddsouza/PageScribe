@@ -14,6 +14,13 @@
           ".txt"
         ]
       }
+    },
+    {
+      "type": "new_file",
+      "meta": {
+        "label": "New Text File",
+        "extension": ".txt"
+      }
     }
   ]
 }

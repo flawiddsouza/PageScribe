@@ -1,3 +1,4 @@
+import type { PluginManifest, PluginManifestRendererMeta } from 'src/shared/types';
 import type { DirectoryItem } from './components/types';
 
 export function findItemByIdInTree(id: string, treeItems: DirectoryItem[]): DirectoryItem | null {
@@ -40,4 +41,33 @@ export function flattenTree(treeItems: DirectoryItem[]): DirectoryItem[] {
     }
   }
   return result;
+}
+
+export function getPluginRenderer(pluginManifests: PluginManifest[], metaType: PluginManifestRendererMeta['type'], extension: string) {
+  for (const manifest of pluginManifests) {
+    for (const contribution of manifest.contributes) {
+      if (contribution.type === 'renderer' && contribution.meta.type === metaType && contribution.meta.supportedExtensions.includes(extension)) {
+        return {
+          folder: manifest.folder,
+          ...contribution.meta,
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
+export function getPluginNewFileContributions(pluginManifests: PluginManifest[]) {
+  const newFileContributions = [];
+
+  for (const manifest of pluginManifests) {
+    for (const contribution of manifest.contributes) {
+      if (contribution.type === 'new_file') {
+        newFileContributions.push(contribution.meta);
+      }
+    }
+  }
+
+  return newFileContributions;
 }
