@@ -8,7 +8,8 @@
       "type": "renderer",
       "meta": {
         "type": "file",
-        "renderer": "index.js",
+        "renderer": "dist/code-renderer.js",
+        "stylesheet": "dist/code-renderer.css",
         "fontHint": "code",
         "supportedExtensions": [
           ".js",

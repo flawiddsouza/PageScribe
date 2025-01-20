@@ -2,7 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' plugins: https://cdn.jsdelivr.net; style-src 'unsafe-inline' 'self' plugins:;">
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' plugins:;
+      style-src 'unsafe-inline' 'self' plugins:;
+      font-src 'self' data: plugins:;
+      img-src 'self' data: plugins:;
+    ">
     <title>PageScribe</title>
   </head>
   <body>

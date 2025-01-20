@@ -1,0 +1,7 @@
+{
+  "search.exclude": {
+    "plugins/scribe-renderer/dist": true,
+    "plugins/table-renderer/dist": true,
+    "plugins/code-renderer/dist": true,
+  }
+}

@@ -19,6 +19,7 @@ export default [
       'out',
       'plugins/scribe-renderer/dist',
       'plugins/table-renderer/dist',
+      'plugins/code-renderer/dist',
     ]
   },
   pluginJs.configs.recommended,
