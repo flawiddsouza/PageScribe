@@ -92,13 +92,14 @@ const draggedItem = ref<DirectoryItem | null>(null);
 const collapsedSidebarItems = ref<Set<string>>(new Set());
 const paneProportionalWidthLeft = ref(0.13);
 const paneProportionalWidthRight = ref(1);
+const lastOpenedFolder = ref<string | null>(null);
 
 onBeforeMount(async () => {
+  lastOpenedFolder.value = localStorage.getItem('lastOpenedFolder');
   pluginManifests = await ipc.getPluginManifests();
 
-  const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
-  if (lastOpenedFolder) {
-    loadFolder(lastOpenedFolder);
+  if (lastOpenedFolder.value) {
+    loadFolder(lastOpenedFolder.value);
   }
 
   const savedPaneProportionalWidthLeft = localStorage.getItem('paneProportionalWidthLeft');
@@ -162,7 +163,7 @@ function handleSidebarItemClick(item: DirectoryItem) {
 }
 
 function createContextMenuItems(item: DirectoryItem): MenuItem[] {
-  const basePath = localStorage.getItem('lastOpenedFolder');
+  const basePath = lastOpenedFolder.value;
 
   if (!basePath) {
     throw new Error('basePath is null when it\'s not supposed to be - should not happen');
@@ -330,7 +331,7 @@ function handleSidebarItemRightClick(item: DirectoryItem, event: MouseEvent) {
 }
 
 function handleSidebarRightClick(event: MouseEvent) {
-  const basePath = localStorage.getItem('lastOpenedFolder');
+  const basePath = lastOpenedFolder.value;
 
   if (!basePath) {
     throw new Error('basePath is null when it\'s not supposed to be - should not happen');
@@ -444,7 +445,7 @@ async function handleDrop(item: DirectoryItem) {
 
   // disallow dropping a folder onto itself
   if (draggedItem.value.id !== item.id) {
-    const basePath = localStorage.getItem('lastOpenedFolder');
+    const basePath = lastOpenedFolder.value;
     if (!basePath) return;
 
     const mover = draggedItem.value.type === 'file' ? ipc.moveFile : ipc.moveFolder;
@@ -469,14 +470,14 @@ function handleCollapseSidebarItem(item: DirectoryItem, collapsed: boolean) {
 }
 
 function saveOpenTabs() {
-  const folderPath = localStorage.getItem('lastOpenedFolder');
+  const folderPath = lastOpenedFolder.value;
   if (folderPath) {
     ipc.saveOpenTabs(folderPath, tabs.value.map(tab => tab.id), activeTab.value?.id ?? '');
   }
 }
 
 function saveCollapsedSidebarItems() {
-  const folderPath = localStorage.getItem('lastOpenedFolder');
+  const folderPath = lastOpenedFolder.value;
   if (folderPath) {
     ipc.saveCollapsedFolders(folderPath, Array.from(collapsedSidebarItems.value));
   }
