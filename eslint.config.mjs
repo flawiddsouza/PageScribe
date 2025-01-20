@@ -19,6 +19,7 @@ export default [
       'out',
       'plugins/scribe-renderer/dist',
       'plugins/table-renderer/dist',
+      'plugins/table-renderer/svelte.config.js',
       'plugins/code-renderer/dist',
     ]
   },
