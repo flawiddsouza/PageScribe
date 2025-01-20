@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "name": "Scribe Renderer",
+  "name": "Scribe Page Renderer",
   "version": "1.0.0",
-  "description": "A plugin that renders scribe files",
+  "description": "A plugin that renders scribe page files",
   "contributes": [
     {
       "type": "renderer",
@@ -12,15 +12,15 @@
         "stylesheet": "dist/index.css",
         "fontHint": "text",
         "supportedExtensions": [
-          ".scribe"
+          ".spge"
         ]
       }
     },
     {
       "type": "new_file",
       "meta": {
-        "label": "New Scribe File",
-        "extension": ".scribe"
+        "label": "New Scribe Page",
+        "extension": ".spge"
       }
     }
   ]

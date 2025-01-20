@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "name": "Table Renderer",
+  "name": "Scribe Table Renderer",
   "version": "1.0.0",
-  "description": "A plugin that renders table files",
+  "description": "A plugin that renders scribe table files",
   "contributes": [
     {
       "type": "renderer",
@@ -12,15 +12,15 @@
         "stylesheet": "dist/table-renderer.css",
         "fontHint": "text",
         "supportedExtensions": [
-          ".table"
+          ".stbl"
         ]
       }
     },
     {
       "type": "new_file",
       "meta": {
-        "label": "New Table",
-        "extension": ".table"
+        "label": "New Scribe Table",
+        "extension": ".stbl"
       }
     }
   ]
