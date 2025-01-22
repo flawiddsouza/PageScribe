@@ -1,8 +1,13 @@
 <template>
-  <div
-    ref="renderer"
-    style="height: 100%; overflow: hidden;"
-  />
+  <div style="height: 100%; display: grid; grid-template-rows: auto 1fr; overflow: auto;">
+    <div style="height: 22px; display: flex; align-items: center; padding-left: 1rem;">
+      {{ getBreadcrumbs() }}
+    </div>
+    <div
+      ref="renderer"
+      style="height: 100%; overflow: hidden;"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -132,6 +137,26 @@ function renderTab() {
   if (props.tab.type === 'file') {
     renderFile();
   }
+}
+
+function getBreadcrumbs() {
+  const tab = props.tab;
+
+  let path = '';
+
+  if (tab.basePath) {
+    path = tab.basePath + '/' + tab.id;
+  } else {
+    path = tab.id;
+  }
+
+  path = path.replaceAll('/', ' > ');
+
+  if (path.startsWith(' > ')) {
+    path = path.slice(3);
+  }
+
+  return path;
 }
 
 watch(() => props.tab, () => {
