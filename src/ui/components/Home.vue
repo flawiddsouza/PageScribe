@@ -94,10 +94,16 @@ const paneProportionalWidthLeft = ref(0.13);
 const paneProportionalWidthRight = ref(1);
 const lastOpenedFolder = ref<string | null>(null);
 const filesToOpen = ref<DirectoryItem[]>([]);
+const initAlreadyCompleted = ref(false);
 
 onBeforeMount(async () => {
   ipc.onFilesToOpen((files) => {
     filesToOpen.value = files;
+    if (initAlreadyCompleted.value) {
+      files.forEach((file) => {
+        handleSidebarItemClick(file);
+      });
+    }
   });
 
   pluginManifests = await ipc.getPluginManifests();
@@ -121,6 +127,8 @@ onBeforeMount(async () => {
   filesToOpen.value.forEach((file) => {
     handleSidebarItemClick(file);
   });
+
+  initAlreadyCompleted.value = true;
 });
 
 watch(() => activeTab.value, (newActiveTab) => {
