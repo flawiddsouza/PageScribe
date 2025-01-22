@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { DirectoryItem } from 'src/ui/components/types';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -21,5 +22,9 @@ contextBridge.exposeInMainWorld('electron', {
     saveOpenTabs: (folderPath: string, openTabs: string[], activeTab: string) => ipcRenderer.invoke('save-open-tabs', folderPath, openTabs, activeTab),
     getCollapsedFolders: (folderPath: string) => ipcRenderer.invoke('get-collapsed-folders', folderPath),
     saveCollapsedFolders: (folderPath: string, collapsedFolders: string[]) => ipcRenderer.invoke('save-collapsed-folders', folderPath, collapsedFolders),
+    // events
+    onFilesToOpen(callback: (filesToOpen: DirectoryItem[]) => void) {
+      return ipcRenderer.on('files-to-open', (_, filesToOpen: DirectoryItem[]) => callback(filesToOpen));
+    }
   }
 });

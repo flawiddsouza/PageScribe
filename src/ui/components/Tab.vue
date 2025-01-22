@@ -25,7 +25,7 @@ let rendererInstance: {
 };
 
 async function renderFile() {
-  const basePath = localStorage.getItem('lastOpenedFolder');
+  const basePath = props.tab.basePath ? props.tab.basePath : localStorage.getItem('lastOpenedFolder');
 
   if (!basePath) {
     throw new Error('basePath is null when it\'s not supposed to be - should not happen');
@@ -96,7 +96,7 @@ async function saveCurrentlyOpenFile() {
   }
 
   try {
-    const basePath = localStorage.getItem('lastOpenedFolder');
+    const basePath = props.tab.basePath ? props.tab.basePath : localStorage.getItem('lastOpenedFolder');
 
     if (!basePath) {
       throw new Error('basePath is null when it\'s not supposed to be - should not happen');

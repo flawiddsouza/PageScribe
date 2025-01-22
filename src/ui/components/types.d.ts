@@ -3,6 +3,7 @@ export interface DirectoryItem {
   name: string;
   type: 'folder' | 'file';
   children?: DirectoryItem[];
+  basePath?: string;
 }
 
 export interface ShowInput {

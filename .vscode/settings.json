@@ -1,7 +1,8 @@
 {
   "search.exclude": {
-    "plugins/scribe-renderer/dist": true,
-    "plugins/table-renderer/dist": true,
+    "plugins/scribe-page-renderer/dist": true,
+    "plugins/scribe-table-renderer/dist": true,
     "plugins/code-renderer/dist": true,
+    "**/package-lock.json": true,
   }
 }

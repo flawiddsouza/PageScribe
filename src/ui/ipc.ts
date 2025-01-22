@@ -85,3 +85,7 @@ export async function getCollapsedFolders(folderPath: string): Promise<string[]>
 export async function saveCollapsedFolders(folderPath: string, collapsedFolders: string[]): Promise<void> {
   await window.electron.ipcRenderer.saveCollapsedFolders(folderPath, collapsedFolders);
 }
+
+export function onFilesToOpen(callback: (filesToOpen: DirectoryItem[]) => void) {
+  window.electron.ipcRenderer.onFilesToOpen(callback);
+}

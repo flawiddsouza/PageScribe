@@ -5,6 +5,7 @@ import started from 'electron-squirrel-startup';
 import windowStateKeeper from './utils/window-state';
 import * as db from './db';
 import './ipcHandlers';
+import type { DirectoryItem } from 'src/ui/components/types';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -12,6 +13,32 @@ if (started) {
 }
 
 db.migrate();
+
+const filesToOpen: DirectoryItem[]  = [];
+
+const isMac = process.platform === 'darwin';
+
+if (isMac) {
+  app.on('open-file', (event, filePath) => {
+    event.preventDefault();
+    filesToOpen.push({
+      id: path.basename(filePath),
+      name: path.basename(filePath),
+      type: 'file',
+      basePath: path.dirname(filePath),
+    });
+  });
+} else {
+  const filePaths = process.argv.slice(1);
+  for(const filePath of filePaths) {
+    filesToOpen.push({
+      id: path.basename(filePath),
+      name: path.basename(filePath),
+      type: 'file',
+      basePath: path.dirname(filePath),
+    });
+  }
+}
 
 const createWindow = async() => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
@@ -73,6 +100,12 @@ const createWindow = async() => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.webContents.openDevTools();
   }
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    if (filesToOpen.length > 0) {
+      mainWindow.webContents.send('files-to-open', filesToOpen);
+    }
+  });
 };
 
 // This method will be called when Electron has finished

@@ -79,7 +79,7 @@ import ContextMenu, { MenuItem } from '@imengyu/vue3-context-menu';
 import smalltalk from 'smalltalk';
 
 import type { DirectoryItem, ShowInput } from './types';
-import { PluginManifest } from '../../../src/shared/types';
+import type { PluginManifest } from '../../../src/shared/types';
 import { findAllAncestorIdsByChildId, findItemByIdInTree, flattenTree, getPluginNewFileContributions } from '../utils';
 
 const sidebarRef = useTemplateRef('sidebar');
@@ -93,14 +93,14 @@ const collapsedSidebarItems = ref<Set<string>>(new Set());
 const paneProportionalWidthLeft = ref(0.13);
 const paneProportionalWidthRight = ref(1);
 const lastOpenedFolder = ref<string | null>(null);
+const filesToOpen = ref<DirectoryItem[]>([]);
 
 onBeforeMount(async () => {
-  lastOpenedFolder.value = localStorage.getItem('lastOpenedFolder');
-  pluginManifests = await ipc.getPluginManifests();
+  ipc.onFilesToOpen((files) => {
+    filesToOpen.value = files;
+  });
 
-  if (lastOpenedFolder.value) {
-    loadFolder(lastOpenedFolder.value);
-  }
+  pluginManifests = await ipc.getPluginManifests();
 
   const savedPaneProportionalWidthLeft = localStorage.getItem('paneProportionalWidthLeft');
   if (savedPaneProportionalWidthLeft) {
@@ -111,6 +111,16 @@ onBeforeMount(async () => {
   if (savedPaneProportionalWidthRight) {
     paneProportionalWidthRight.value = parseFloat(savedPaneProportionalWidthRight);
   }
+
+  lastOpenedFolder.value = localStorage.getItem('lastOpenedFolder');
+
+  if (lastOpenedFolder.value) {
+    await loadFolder(lastOpenedFolder.value);
+  }
+
+  filesToOpen.value.forEach((file) => {
+    handleSidebarItemClick(file);
+  });
 });
 
 watch(() => activeTab.value, (newActiveTab) => {

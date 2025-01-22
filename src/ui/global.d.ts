@@ -25,6 +25,8 @@ declare global {
         saveOpenTabs: (folderPath: string, openTabs: string[], activeTab: string) => Promise<void>;
         getCollapsedFolders: (folderPath: string) => Promise<string[]>;
         saveCollapsedFolders: (folderPath: string, collapsedFolders: string[]) => Promise<void>;
+        // events
+        onFilesToOpen: (callback: (filesToOpen: DirectoryItem[]) => void) => void;
       };
     };
   }

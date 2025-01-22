@@ -17,9 +17,9 @@ export default [
     ignores: [
       '.vite',
       'out',
-      'plugins/scribe-renderer/dist',
-      'plugins/table-renderer/dist',
-      'plugins/table-renderer/svelte.config.js',
+      'plugins/scribe-page-renderer/dist',
+      'plugins/scribe-table-renderer/dist',
+      'plugins/scribe-table-renderer/svelte.config.js',
       'plugins/code-renderer/dist',
     ]
   },
