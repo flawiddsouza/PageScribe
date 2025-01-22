@@ -11,6 +11,7 @@
           class="button no-radius"
           style="width: 100%;"
           @click="openFolder"
+          v-if="!lastOpenedFolder"
         >
           Open Folder
         </button>
