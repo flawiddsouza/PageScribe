@@ -27,6 +27,8 @@ declare global {
         saveCollapsedFolders: (folderPath: string, collapsedFolders: string[]) => Promise<void>;
         // events
         onFilesToOpen: (callback: (filesToOpen: DirectoryItem[]) => void) => void;
+        onOpenFolder: (callback: (folderPath: string) => void) => void;
+        onCloseFolder: (callback: () => void) => void;
       };
     };
   }

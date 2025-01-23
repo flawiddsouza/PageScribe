@@ -8,10 +8,10 @@
         @resized="savePaneProportionalWidthLeft"
       >
         <button
+          v-if="!lastOpenedFolder"
           class="button no-radius"
           style="width: 100%;"
           @click="openFolder"
-          v-if="!lastOpenedFolder"
         >
           Open Folder
         </button>
@@ -107,6 +107,14 @@ onBeforeMount(async () => {
     }
   });
 
+  ipc.onOpenFolder((folderPath) => {
+    openFolderBase(folderPath);
+  });
+
+  ipc.onCloseFolder(() => {
+    resetView();
+  });
+
   pluginManifests = await ipc.getPluginManifests();
 
   const savedPaneProportionalWidthLeft = localStorage.getItem('paneProportionalWidthLeft');
@@ -144,18 +152,26 @@ function resetView() {
   items.value = [];
   tabs.value = [];
   activeTab.value = null;
+  lastOpenedFolder.value = null;
+  localStorage.removeItem('lastOpenedFolder');
+}
+
+async function openFolderBase(folderPath: string) {
+  resetView();
+  await loadFolder(folderPath);
 }
 
 async function openFolder() {
   const folderPath = await ipc.openFolder();
   if (folderPath !== null) {
-    resetView();
-    localStorage.setItem('lastOpenedFolder', folderPath);
-    await loadFolder(folderPath);
+    await openFolderBase(folderPath);
   }
 }
 
 async function loadFolder(folderPath: string) {
+  lastOpenedFolder.value = folderPath;
+  localStorage.setItem('lastOpenedFolder', folderPath);
+
   await getDirectoryTree(folderPath);
 
   const collapsedFolders = await ipc.getCollapsedFolders(folderPath);

@@ -25,6 +25,12 @@ contextBridge.exposeInMainWorld('electron', {
     // events
     onFilesToOpen(callback: (filesToOpen: DirectoryItem[]) => void) {
       return ipcRenderer.on('files-to-open', (_, filesToOpen: DirectoryItem[]) => callback(filesToOpen));
-    }
+    },
+    onOpenFolder(callback: (folderPath: string) => void) {
+      return ipcRenderer.on('open-folder', (_, folderPath: string) => callback(folderPath));
+    },
+    onCloseFolder(callback: () => void) {
+      return ipcRenderer.on('close-folder', callback);
+    },
   }
 });

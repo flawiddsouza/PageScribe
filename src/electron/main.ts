@@ -1,4 +1,4 @@
-import { app, BrowserWindow, protocol, screen } from 'electron';
+import { app, BrowserWindow, protocol, screen, Menu } from 'electron';
 import path from 'path';
 import fs from 'fs/promises';
 import started from 'electron-squirrel-startup';
@@ -6,6 +6,7 @@ import windowStateKeeper from './utils/window-state';
 import * as db from './db';
 import './ipcHandlers';
 import type { DirectoryItem } from 'src/ui/components/types';
+import { generateMenuTemplate } from './menu';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -31,6 +32,10 @@ if (isMac) {
 } else {
   const filePaths = process.argv.slice(1);
   for(const filePath of filePaths) {
+    if (filePath === '.') {
+      continue;
+    }
+
     filesToOpen.push({
       id: path.basename(filePath),
       name: path.basename(filePath),
@@ -88,6 +93,9 @@ const createWindow = async() => {
   });
 
   winState.manage(mainWindow);
+
+  const menu = Menu.buildFromTemplate(generateMenuTemplate(mainWindow));
+  Menu.setApplicationMenu(menu);
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {

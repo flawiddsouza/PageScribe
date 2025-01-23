@@ -89,3 +89,11 @@ export async function saveCollapsedFolders(folderPath: string, collapsedFolders:
 export function onFilesToOpen(callback: (filesToOpen: DirectoryItem[]) => void) {
   window.electron.ipcRenderer.onFilesToOpen(callback);
 }
+
+export function onOpenFolder(callback: (folderPath: string) => void) {
+  window.electron.ipcRenderer.onOpenFolder(callback);
+}
+
+export function onCloseFolder(callback: () => void) {
+  window.electron.ipcRenderer.onCloseFolder(callback);
+}
