@@ -15,6 +15,7 @@
         >
           Open Folder
         </button>
+        <div v-else></div>
         <Sidebar
           ref="sidebar"
           :items="items"
